@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Revit 2026 Add-In Manifest
+  Copy this file to:  %APPDATA%\Autodesk\Revit\Addins\2026\RevitMcpAddin.addin
+  Or place it in the same folder as the compiled DLL.
+-->
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>RevitMCP</Name>
+    <Assembly>RevitMcpAddin.dll</Assembly>
+    <FullClassName>RevitMcpAddin.App</FullClassName>
+    <!-- Generate a unique GUID per project: Tools > Create GUID in VS -->
+    <AddInId>3F8A1C2D-4E5F-6789-ABCD-0123456789AB</AddInId>
+    <VendorId>RevitMCP</VendorId>
+    <VendorDescription>RevitMCP - MCP Server for Claude Code integration</VendorDescription>
+  </AddIn>
+
+  <AddIn Type="Command">
+    <Name>OpenMcpPanel</Name>
+    <Assembly>RevitMcpAddin.dll</Assembly>
+    <FullClassName>RevitMcpAddin.OpenMcpPanelCommand</FullClassName>
+    <AddInId>7C9B2D3E-5F6A-7890-BCDE-123456789ABC</AddInId>
+    <VendorId>RevitMCP</VendorId>
+    <VendorDescription>Opens the RevitMCP control panel</VendorDescription>
+    <Text>Open MCP Panel</Text>
+    <VisibilityMode>AlwaysVisible</VisibilityMode>
+  </AddIn>
+</RevitAddIns>

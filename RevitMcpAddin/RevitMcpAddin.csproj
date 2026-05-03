@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Revit 2026 uses .NET 8 -->
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Platform>x64</Platform>
+    <AssemblyName>RevitMcpAddin</AssemblyName>
+    <RootNamespace>RevitMcpAddin</RootNamespace>
+    <LangVersion>12</LangVersion>
+    <!-- Keep output flat (no net8.0-windows subfolder) -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Configurations>Debug;Release</Configurations>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <!-- ─────────────────────────── NuGet Packages ─────────────────────────── -->
+  <ItemGroup>
+    <!-- Revit async dispatcher (thread-safe Revit API access) -->
+    <PackageReference Include="Nice3point.Revit.Api.AdWindows" Version="2026.4.0" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="2026.4.0" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="2026.4.0" />
+    <PackageReference Include="Revit.Async" Version="2.1.1">
+      <GeneratePathProperty>True</GeneratePathProperty>
+    </PackageReference>
+    <!-- JSON serialisation -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
+      <GeneratePathProperty>True</GeneratePathProperty>
+    </PackageReference>
+    <!-- MVVM source generators -->
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2">
+      <GeneratePathProperty>True</GeneratePathProperty>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- ──────────────────── Revit 2026 API references ──────────────────────  -->
+  <!-- Set Private=false so Revit DLLs are NOT copied to output folder        -->
+  <ItemGroup>
+    <Reference Include="RevitAPI">
+      <HintPath>C:\Program Files\Autodesk\Revit 2026\RevitAPI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>C:\Program Files\Autodesk\Revit 2026\RevitAPIUI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

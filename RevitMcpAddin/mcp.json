@@ -1,0 +1,14 @@
+{
+	"servers": {
+    "revit": {
+      "command": "C:/Program Files/nodejs/node.exe",
+      "args": [
+        "D:/Test/RevitMcpStdio/mcpServer.js"
+      ],
+      "env": {
+        "REVIT_BASE_URL": "http://localhost:5000"
+      }
+    }
+  },
+	"inputs": []
+}

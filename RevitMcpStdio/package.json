@@ -1,0 +1,19 @@
+{
+  "name": "revitmcp-stdio",
+  "version": "1.0.0",
+  "description": "MCP STDIO bridge — forwards Claude Desktop tool calls to the local Revit MCP add-in",
+  "main": "mcpServer.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node mcpServer.js",
+    "dev":   "node --watch mcpServer.js",
+    "debug": "DEBUG=1 node mcpServer.js"
+  },
+  "dependencies": {
+    "dotenv":      "^16.4.5",
+    "eventsource": "^2.0.2"
+  }
+}
