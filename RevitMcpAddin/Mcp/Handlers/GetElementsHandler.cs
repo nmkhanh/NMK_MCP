@@ -42,8 +42,8 @@ namespace RevitMcpAddin.Mcp.Handlers
         public McpToolDefinition GetDefinition() => new()
         {
             Name        = ToolName,
-            Description = "Returns elements from the active Revit document filtered by category. " +
-                          "Use the BuiltInCategory suffix as the category name, e.g. 'Walls', 'Doors', 'Floors'.",
+            Description = "Returns elements from the active Revit document filtered by category and optional " +
+                          "parameter values. Supports both built-in parameters and shared parameters by name.",
             InputSchema = new
             {
                 type       = "object",
@@ -61,6 +61,34 @@ namespace RevitMcpAddin.Mcp.Handlers
                         description = "Include element parameters in the response. Defaults to false for speed. " +
                                       "Set to true only when you need parameter values.",
                         @default    = false
+                    },
+                    parameterFilters = new
+                    {
+                        type        = "array",
+                        description = "Optional filters on parameter values. " +
+                                      "An element is returned only when it satisfies ALL filters. " +
+                                      "Works with built-in parameters (e.g. 'Comments', 'Mark') " +
+                                      "and shared parameters by their display name. " +
+                                      "Checks both instance and type parameters. " +
+                                      "Comparison is case-insensitive exact match.",
+                        items = new
+                        {
+                            type       = "object",
+                            properties = new
+                            {
+                                name = new
+                                {
+                                    type        = "string",
+                                    description = "Parameter display name (e.g. 'Fire Rating', 'Mark', 'Comments')."
+                                },
+                                value = new
+                                {
+                                    type        = "string",
+                                    description = "Expected parameter value (case-insensitive)."
+                                }
+                            },
+                            required = new[] { "name", "value" }
+                        }
                     }
                 },
                 required = new[] { "category" }
@@ -80,16 +108,35 @@ namespace RevitMcpAddin.Mcp.Handlers
 
                 var includeParameters = arguments?["includeParameters"]?.Value<bool>() ?? false;
 
-                Logger.Info($"get_elements: category='{category}', includeParams={includeParameters}");
+                // Parse optional parameterFilters array — supports shared + built-in params
+                List<(string Name, string Value)>? parameterFilters = null;
+                var filtersToken = arguments?["parameterFilters"] as JArray;
+                if (filtersToken != null && filtersToken.Count > 0)
+                {
+                    parameterFilters = new List<(string, string)>();
+                    foreach (var item in filtersToken)
+                    {
+                        var n = item["name"]?.Value<string>();
+                        var v = item["value"]?.Value<string>();
+                        if (!string.IsNullOrWhiteSpace(n) && v != null)
+                            parameterFilters.Add((n!, v));
+                    }
+                    if (parameterFilters.Count == 0) parameterFilters = null;
+                }
+
+                Logger.Info($"get_elements: category='{category}', includeParams={includeParameters}, " +
+                            $"filters={parameterFilters?.Count ?? 0}");
 
                 // ── Delegate to RevitService ─────────────────────────────
-                var elements = await _revitService.GetElementsAsync(category, 0, includeParameters, cancellationToken);
+                var elements = await _revitService.GetElementsAsync(
+                    category, 0, includeParameters, parameterFilters, cancellationToken);
 
                 var summary = new
                 {
-                    category          = category,
-                    returnedCount     = elements.Count,
+                    category,
+                    returnedCount = elements.Count,
                     includeParameters,
+                    filterCount   = parameterFilters?.Count ?? 0,
                     elements
                 };
 

@@ -4,7 +4,7 @@
 library
 C#
 .cs
-D:\Test\RevitMcpAddin\obj\Debug\
+D:\KHANHNGUYEN\MCP\NMK_MCP\RevitMcpAddin\obj\Debug\
 RevitMcpAddin
 none
 false
@@ -13,7 +13,7 @@ TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR
 11256845736
 
 31818656130
-20467562440
+204-2097738015
 Views\MainView.xaml;
 
 False

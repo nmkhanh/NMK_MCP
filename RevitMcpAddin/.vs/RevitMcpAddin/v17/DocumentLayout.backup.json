@@ -1,0 +1,58 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\KHANHNGUYEN\\MCP\\NMK_MCP\\RevitMcpAddin\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\khanhnguyen\\mcp\\nmk_mcp\\revitmcpaddin\\services\\functions\\f_print.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|solutionrelative:services\\functions\\f_print.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\khanhnguyen\\mcp\\nmk_mcp\\revitmcpaddin\\revitmcpaddin.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|solutionrelative:revitmcpaddin.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "F_Print.cs",
+              "DocumentMoniker": "D:\\KHANHNGUYEN\\MCP\\NMK_MCP\\RevitMcpAddin\\Services\\Functions\\F_Print.cs",
+              "RelativeDocumentMoniker": "Services\\Functions\\F_Print.cs",
+              "ToolTip": "D:\\KHANHNGUYEN\\MCP\\NMK_MCP\\RevitMcpAddin\\Services\\Functions\\F_Print.cs",
+              "RelativeToolTip": "Services\\Functions\\F_Print.cs",
+              "ViewState": "AgIAAJsAAAAAAAAAAAAQwKoAAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-07T04:57:09.627Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "RevitMcpAddin",
+              "DocumentMoniker": "D:\\KHANHNGUYEN\\MCP\\NMK_MCP\\RevitMcpAddin\\RevitMcpAddin.csproj",
+              "RelativeDocumentMoniker": "RevitMcpAddin.csproj",
+              "ToolTip": "D:\\KHANHNGUYEN\\MCP\\NMK_MCP\\RevitMcpAddin\\RevitMcpAddin.csproj",
+              "RelativeToolTip": "RevitMcpAddin.csproj",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAowCoAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-05-07T04:05:20.176Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

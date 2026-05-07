@@ -19,9 +19,9 @@
   <!-- ─────────────────────────── NuGet Packages ─────────────────────────── -->
   <ItemGroup>
     <!-- Revit async dispatcher (thread-safe Revit API access) -->
-    <PackageReference Include="Nice3point.Revit.Api.AdWindows" Version="2026.4.0" />
-    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="2026.4.0" />
-    <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="2026.4.0" />
+    <PackageReference Include="Nice3point.Revit.Api.AdWindows" Version="2025" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="2025" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="2025" />
     <PackageReference Include="Revit.Async" Version="2.1.1">
       <GeneratePathProperty>True</GeneratePathProperty>
     </PackageReference>
@@ -39,11 +39,11 @@
   <!-- Set Private=false so Revit DLLs are NOT copied to output folder        -->
   <ItemGroup>
     <Reference Include="RevitAPI">
-      <HintPath>C:\Program Files\Autodesk\Revit 2026\RevitAPI.dll</HintPath>
+      <HintPath>C:\Program Files\Autodesk\Revit 2025\RevitAPI.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="RevitAPIUI">
-      <HintPath>C:\Program Files\Autodesk\Revit 2026\RevitAPIUI.dll</HintPath>
+      <HintPath>C:\Program Files\Autodesk\Revit 2025\RevitAPIUI.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
@@ -53,13 +53,13 @@
 			<AllOutputFiles Include="$(TargetDir)**\*.*" />
 
 		</ItemGroup>
-		<Copy SourceFiles="@(AllOutputFiles)" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\2026\RevitMcpAddin\" SkipUnchangedFiles="false" />
+		<Copy SourceFiles="@(AllOutputFiles)" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\2025\RevitMcpAddin\" SkipUnchangedFiles="false" />
 	</Target>
 	<Target Name="CopyRebuildOutput" AfterTargets="Rebuild">
 		<ItemGroup>
 			<!-- Lấy toàn bộ output -->
 			<AllOutputFiles Include="$(TargetDir)**\*.*" />
 		</ItemGroup>
-		<Copy SourceFiles="@(AllOutputFiles)" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\2026\RevitMcpAddin\" SkipUnchangedFiles="false" />
+		<Copy SourceFiles="@(AllOutputFiles)" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\2025\RevitMcpAddin\" SkipUnchangedFiles="false" />
 	</Target>
 </Project>

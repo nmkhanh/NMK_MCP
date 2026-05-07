@@ -27,10 +27,16 @@ namespace RevitMcpAddin.Services
         /// <param name="categoryName">Category name (OST_ suffix).</param>
         /// <param name="limit">Max elements. 0 / int.MaxValue = all (capped at <see cref="HardMaxElements"/>).</param>
         /// <param name="includeParameters">When false (default), skips parameter extraction for speed.</param>
+        /// <param name="parameterFilters">
+        /// Optional list of (Name, Value) pairs. An element must satisfy ALL filters to be included.
+        /// Matches both instance and type parameters; works with built-in and shared parameters.
+        /// Comparison is case-insensitive, exact string match on <c>AsValueString()</c> or <c>AsString()</c>.
+        /// </param>
         public Task<List<ElementInfo>> GetElementsAsync(
             string categoryName,
             int limit = 50,
             bool includeParameters = false,
+            IReadOnlyList<(string Name, string Value)>? parameterFilters = null,
             CancellationToken ct = default)
         {
             return _queue.EnqueueAsync(async uiApp =>
@@ -43,20 +49,36 @@ namespace RevitMcpAddin.Services
                         "Use the suffix of a BuiltInCategory, e.g. 'Walls', 'Doors', 'Windows'.");
 
                 // Resolve effective limit — always cap at HardMaxElements
-                var effectiveLimit = (limit <= 0 || limit == int.MaxValue)
-                    ? HardMaxElements
-                    : Math.Min(limit, HardMaxElements);
+                // (collect more first if we'll be filtering, then trim after)
+                var hasFilters = parameterFilters != null && parameterFilters.Count > 0;
+                var collectLimit = hasFilters ? HardMaxElements : (
+                    (limit <= 0 || limit == int.MaxValue) ? HardMaxElements : Math.Min(limit, HardMaxElements));
 
                 var elements = new FilteredElementCollector(doc)
                     .OfCategory(bic)
                     .WhereElementIsNotElementType()
-                    .Take(effectiveLimit)
+                    .Take(collectLimit)
                     .Cast<Element>()
                     .ToList();
 
+                // Apply parameter filters (supports built-in and shared parameters)
+                if (hasFilters)
+                {
+                    elements = elements
+                        .Where(e => MatchesParameterFilters(e, parameterFilters!))
+                        .ToList();
+
+                    // Apply the user-requested limit AFTER filtering
+                    var effectiveLimit = (limit <= 0 || limit == int.MaxValue)
+                        ? HardMaxElements
+                        : Math.Min(limit, HardMaxElements);
+                    if (elements.Count > effectiveLimit)
+                        elements = elements.Take(effectiveLimit).ToList();
+                }
+
                 Trace.WriteLine(
                     $"[RevitMCP][ELEMENTS] category={categoryName}, found={elements.Count}, " +
-                    $"limit={effectiveLimit}, includeParams={includeParameters}");
+                    $"limit={collectLimit}, filters={parameterFilters?.Count ?? 0}, includeParams={includeParameters}");
 
                 var result = elements.Select(e => BuildElementInfo(e, includeParameters)).ToList();
                 return await Task.FromResult(result);
@@ -132,6 +154,69 @@ namespace RevitMcpAddin.Services
             {
                 return string.Empty;
             }
+        }
+
+        // ── Parameter filter helpers ─────────────────────────────────────
+
+        /// <summary>
+        /// Returns true if the element satisfies ALL supplied name/value filters.
+        /// Checks instance parameters first, then type parameters.
+        /// Handles built-in parameters and shared parameters alike (matched by name).
+        /// </summary>
+        private static bool MatchesParameterFilters(
+            Element e,
+            IReadOnlyList<(string Name, string Value)> filters)
+        {
+            foreach (var (name, value) in filters)
+            {
+                if (!FindParameterValue(e, name, out var actual))
+                    return false;   // parameter not found on element or its type
+
+                if (!string.Equals(actual, value, StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Looks up a parameter by name on the element (instance) and, if not found, on its element type.
+        /// Returns the string representation of the value.
+        /// </summary>
+        private static bool FindParameterValue(Element e, string paramName, out string value)
+        {
+            value = string.Empty;
+
+            // 1. Instance parameters (includes shared parameters bound to instances)
+            if (TryGetParamValue(e.Parameters, paramName, out value))
+                return true;
+
+            // 2. Type parameters (shared parameters can also be bound to the type)
+            try
+            {
+                var typeElem = e.Document.GetElement(e.GetTypeId());
+                if (typeElem != null && TryGetParamValue(typeElem.Parameters, paramName, out value))
+                    return true;
+            }
+            catch { /* ignore — type may not exist */ }
+
+            return false;
+        }
+
+        private static bool TryGetParamValue(
+            ParameterSet parameters,
+            string paramName,
+            out string value)
+        {
+            value = string.Empty;
+            foreach (Parameter p in parameters)
+            {
+                if (!string.Equals(p.Definition?.Name, paramName, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                if (!p.HasValue) continue;
+                value = p.AsValueString() ?? p.AsString() ?? string.Empty;
+                return true;
+            }
+            return false;
         }
     }
 }

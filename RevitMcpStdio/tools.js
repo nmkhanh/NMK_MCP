@@ -59,19 +59,35 @@ const TOOLS = [
   {
     name:        'get_elements',
     description: 'Returns elements from the active Revit document filtered by ' +
-                 'category. Use the BuiltInCategory suffix as the category name: ' +
-                 '"Walls", "Doors", "Windows", "Floors", "Columns", "Stairs", "Rooms".',
+                 'category and optional parameter values. ' +
+                 'Use the BuiltInCategory suffix as the category name: ' +
+                 '"Walls", "Doors", "Windows", "Floors", "Columns", "Stairs", "Rooms", "Sheets".',
     inputSchema: {
       type:       'object',
       properties: {
         category: {
           type:        'string',
-          description: 'Revit BuiltInCategory suffix, e.g. "Walls", "Doors", "Floors".'
+          description: 'Revit BuiltInCategory suffix, e.g. "Walls", "Doors", "Floors", "Sheets".'
         },
         includeParameters: {
           type:        'boolean',
           description: 'Include Revit element parameters in the response. Slow on large result sets. Default: false.',
           default:     false
+        },
+        parameterFilters: {
+          type:        'array',
+          description: 'Optional filters on parameter values (AND logic). ' +
+                       'Works with built-in parameters (e.g. "Comments", "Mark") ' +
+                       'and shared parameters by display name. ' +
+                       'Checks both instance and type parameters. Case-insensitive exact match.',
+          items: {
+            type:       'object',
+            properties: {
+              name:  { type: 'string', description: 'Parameter display name.' },
+              value: { type: 'string', description: 'Expected value (case-insensitive).' }
+            },
+            required: ['name', 'value']
+          }
         }
       },
       required: ['category']
@@ -125,35 +141,24 @@ const TOOLS = [
   // ── print_sheet_to_pdf ────────────────────────────────────
   {
     name:        'print_sheet_to_pdf',
-    description: 'Print Revit sheets to PDF using a virtual PDF printer (PDF24 preferred; ' +
-                 'falls back to any installed PDF printer). ' +
-                 'Paper size is auto-detected per sheet from the title block dimensions ' +
-                 '(A0–A4, Letter, Tabloid) and matched to the printer\'s paper size list. ' +
-                 'Supports combining all sheets into one PDF or exporting each sheet separately.',
+    description: 'Export Revit sheets to individual PDF files using PDF24 virtual printer. ' +
+                 'Sheets are identified by their Revit element ID — use get_elements with ' +
+                 'category="Sheets" to discover IDs. ' +
+                 'Each PDF is named after the sheet\'s SheetNumber. ' +
+                 'Paper size is auto-detected from the title block dimensions.',
     inputSchema: {
       type:       'object',
       properties: {
-        sheetNumbers: {
+        sheetIds: {
           type:        'array',
           items:       { type: 'string' },
-          description: 'Sheet numbers to export (e.g. ["A-001","S-101"]). ' +
-                       'Omit or pass an empty array to export ALL sheets in the document.'
+          description: 'Revit element IDs of the sheets to print (e.g. ["123456","789012"]). ' +
+                       'Required — use get_elements with category="Sheets" to get valid IDs.'
         },
         outputFolder: {
           type:        'string',
-          description: 'Absolute folder path where PDF file(s) will be saved. ' +
-                       'Defaults to the document\'s own folder, or Desktop if the document is unsaved.'
-        },
-        outputFileName: {
-          type:        'string',
-          description: 'Base file name (without .pdf extension) for the combined PDF. ' +
-                       'Ignored when combine=false. Defaults to the document title.'
-        },
-        combine: {
-          type:        'boolean',
-          description: 'true (default) = merge all sheets into one PDF. ' +
-                       'false = one PDF file per sheet.',
-          default:     true
+          description: 'Absolute folder path where PDF files will be saved. ' +
+                       'Defaults to the document\'s own folder, or Desktop if unsaved.'
         },
         colorMode: {
           type:        'string',
@@ -166,7 +171,7 @@ const TOOLS = [
           default:     'High'
         }
       },
-      required: []
+      required: ['sheetIds']
     }
   }
 ];

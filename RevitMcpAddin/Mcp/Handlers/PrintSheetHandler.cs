@@ -7,20 +7,17 @@ namespace RevitMcpAddin.Mcp.Handlers
 {
     /// <summary>
     /// MCP tool: <b>print_sheet_to_pdf</b>
-    /// Exports one or more Revit ViewSheets to PDF using the native Revit PDF engine.
-    /// Paper size is auto-detected from each sheet's title block dimensions
-    /// (A0 / A1 / A2 / A3 / A4 / Letter / Tabloid) or can be specified explicitly.
+    /// Exports one or more Revit ViewSheets to PDF using a virtual PDF printer (PDF24).
+    /// Each sheet is printed as a separate PDF file named after its SheetNumber.
+    /// Paper size is auto-detected from the sheet's title block dimensions.
     ///
     /// Input example:
     /// <code>
     /// {
-    ///   "sheetNumbers":  ["A-001", "S-101"],  // omit = all sheets
-    ///   "outputFolder":  "C:\\Output\\PDFs",   // omit = document folder
-    ///   "outputFileName": "MyProject",          // omit = document title (combined PDF only)
-    ///   "combine":       true,                  // merge into one PDF (default: true)
-    ///   "paperSize":     "Auto",                // "Auto","A0","A1","A2","A3","A4","Letter","Tabloid"
-    ///   "colorMode":     "Color",               // "Color","GrayScale","BlackAndWhite"
-    ///   "rasterQuality": "High"                 // "Draft","Low","Medium","High","Presentation"
+    ///   "sheetIds":    ["123456", "789012"],  // required — Revit element IDs
+    ///   "outputFolder": "C:\\Output\\PDFs",    // omit = document folder
+    ///   "colorMode":   "Color",               // "Color","GrayScale","BlackAndWhite"
+    ///   "rasterQuality": "High"               // "Draft","Low","Medium","High","Presentation"
     /// }
     /// </code>
     ///
@@ -29,10 +26,8 @@ namespace RevitMcpAddin.Mcp.Handlers
     /// {
     ///   "success": true,
     ///   "sheetCount": 2,
-    ///   "sheets": [{ "number": "A-001", "name": "Floor Plan", "widthMm": 841, "heightMm": 594, "paperSize": "A1" }],
-    ///   "outputFolder": "C:\\Output\\PDFs",
-    ///   "outputFile": "C:\\Output\\PDFs\\MyProject.pdf",
-    ///   "message": "Exported 2 sheet(s) to 'C:\\Output\\PDFs'."
+    ///   "sheets": [{ "id": "123456", "number": "A-001", "name": "Floor Plan", "file": "C:\\...\\A-001.pdf" }],
+    ///   "outputFolder": "C:\\Output\\PDFs"
     /// }
     /// </code>
     /// </summary>
@@ -60,40 +55,27 @@ namespace RevitMcpAddin.Mcp.Handlers
         public McpToolDefinition GetDefinition() => new()
         {
             Name        = ToolName,
-            Description = "Export Revit sheets to PDF using a virtual PDF printer (PDF24 preferred). " +
-                          "Paper size is auto-detected per sheet from the title block dimensions " +
-                          "(A0–A4, Letter, Tabloid) and matched to the printer's available sizes. " +
-                          "Supports combining all sheets into a single PDF or exporting each separately.",
+            Description = "Export Revit sheets to individual PDF files using PDF24 virtual printer. " +
+                          "Sheets are identified by their Revit element ID (use get_elements with category='Sheets'). " +
+                          "Each PDF is named after the sheet's SheetNumber. " +
+                          "Paper size is auto-detected from the title block dimensions.",
             InputSchema = new
             {
                 type       = "object",
                 properties = new
                 {
-                    sheetNumbers = new
+                    sheetIds = new
                     {
                         type        = "array",
                         items       = new { type = "string" },
-                        description = "List of sheet numbers to export (e.g. [\"A-001\",\"S-101\"]). " +
-                                      "Omit or pass an empty array to export ALL sheets in the document."
+                        description = "Revit element IDs of the sheets to print (e.g. [\"123456\",\"789012\"]). " +
+                                      "Required — use get_elements with category='Sheets' to discover IDs."
                     },
                     outputFolder = new
                     {
                         type        = "string",
                         description = "Absolute path to the output folder. " +
                                       "Defaults to the document's own folder, or Desktop if unsaved."
-                    },
-                    outputFileName = new
-                    {
-                        type        = "string",
-                        description = "Base file name (without .pdf extension) for the combined PDF. " +
-                                      "Ignored when combine=false. Defaults to the document title."
-                    },
-                    combine = new
-                    {
-                        type        = "boolean",
-                        description = "true (default) = merge all sheets into one PDF. " +
-                                      "false = one PDF file per sheet.",
-                        @default    = true
                     },
                     colorMode = new
                     {
@@ -108,7 +90,7 @@ namespace RevitMcpAddin.Mcp.Handlers
                         @default    = "High"
                     }
                 },
-                required = Array.Empty<string>()
+                required = new[] { "sheetIds" }
             }
         };
 
@@ -118,13 +100,11 @@ namespace RevitMcpAddin.Mcp.Handlers
             {
                 var request = new PrintSheetRequest
                 {
-                    SheetNumbers  = (arguments?["sheetNumbers"] as JArray)
+                    SheetIds      = (arguments?["sheetIds"] as JArray)
                                         ?.Select(t => t.Value<string>()!)
                                         .Where(s => !string.IsNullOrWhiteSpace(s))
                                         .ToList(),
                     OutputFolder   = arguments?["outputFolder"]?.Value<string>(),
-                    OutputFileName = arguments?["outputFileName"]?.Value<string>(),
-                    Combine        = arguments?["combine"]?.Value<bool>()         ?? true,
                     ColorMode      = arguments?["colorMode"]?.Value<string>()     ?? "Color",
                     RasterQuality  = arguments?["rasterQuality"]?.Value<string>() ?? "High",
                 };

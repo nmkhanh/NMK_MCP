@@ -8,11 +8,11 @@ namespace RevitMcpAddin.Models
     public class PrintSheetRequest
     {
         /// <summary>
-        /// Sheet numbers to export (e.g. "A-001", "S-101").
-        /// Null or empty list = all sheets in the document.
+        /// Revit element IDs of the ViewSheets to print (e.g. ["123456", "789012"]).
+        /// Required — if null or empty, the request is rejected and nothing is printed.
         /// </summary>
-        [JsonProperty("sheetNumbers")]
-        public List<string>? SheetNumbers { get; set; }
+        [JsonProperty("sheetIds")]
+        public List<string>? SheetIds { get; set; }
 
         /// <summary>
         /// Absolute folder path where PDF file(s) will be written.
@@ -20,20 +20,6 @@ namespace RevitMcpAddin.Models
         /// </summary>
         [JsonProperty("outputFolder")]
         public string? OutputFolder { get; set; }
-
-        /// <summary>
-        /// Base file name (without .pdf extension) used for the combined PDF.
-        /// Defaults to the document title.
-        /// </summary>
-        [JsonProperty("outputFileName")]
-        public string? OutputFileName { get; set; }
-
-        /// <summary>
-        /// When true (default), all sheets are merged into a single PDF.
-        /// When false, each sheet produces its own PDF file.
-        /// </summary>
-        [JsonProperty("combine")]
-        public bool Combine { get; set; } = true;
 
         /// <summary>
         /// Color output mode.
