@@ -44,12 +44,12 @@ namespace RevitMcpAddin
                 RevitTask.Initialize(application);
                 Logger.Info("RevitTask initialised.");
 
-                // Optional: enable file logging
-                // var logPath = Path.Combine(
-                //     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                //     "RevitMCP", "revitmcp.log");
-                // Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
-                // Logger.EnableFileLogging(logPath);
+                // Enable file logging → %LocalAppData%\RevitMCP\revitmcp.log
+                var logPath = System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "RevitMCP", "revitmcp.log");
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(logPath)!);
+                Logger.EnableFileLogging(logPath);
 
                 // ── 2. Build service graph ───────────────────────────────
                 QueueSvc  = new AsyncQueueService();
@@ -60,7 +60,8 @@ namespace RevitMcpAddin
                     .Register(new GetDocumentHandler(RevitSvc))
                     .Register(new GetElementsHandler(RevitSvc))
                     .Register(new CreateWallHandler(RevitSvc))
-                    .Register(new SelectElementsHandler(RevitSvc));
+                    .Register(new SelectElementsHandler(RevitSvc))
+                    .Register(new PrintSheetHandler(RevitSvc));
 
                 // ── 4. Create and start the embedded HTTP/SSE server ─────
                 //  DefaultPrefix  = "http://+:5000/"      → LAN + loopback (needs URL ACL)

@@ -120,6 +120,54 @@ const TOOLS = [
       },
       required: ['startX', 'startY', 'endX', 'endY', 'height']
     }
+  },
+
+  // ── print_sheet_to_pdf ────────────────────────────────────
+  {
+    name:        'print_sheet_to_pdf',
+    description: 'Print Revit sheets to PDF using a virtual PDF printer (PDF24 preferred; ' +
+                 'falls back to any installed PDF printer). ' +
+                 'Paper size is auto-detected per sheet from the title block dimensions ' +
+                 '(A0–A4, Letter, Tabloid) and matched to the printer\'s paper size list. ' +
+                 'Supports combining all sheets into one PDF or exporting each sheet separately.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        sheetNumbers: {
+          type:        'array',
+          items:       { type: 'string' },
+          description: 'Sheet numbers to export (e.g. ["A-001","S-101"]). ' +
+                       'Omit or pass an empty array to export ALL sheets in the document.'
+        },
+        outputFolder: {
+          type:        'string',
+          description: 'Absolute folder path where PDF file(s) will be saved. ' +
+                       'Defaults to the document\'s own folder, or Desktop if the document is unsaved.'
+        },
+        outputFileName: {
+          type:        'string',
+          description: 'Base file name (without .pdf extension) for the combined PDF. ' +
+                       'Ignored when combine=false. Defaults to the document title.'
+        },
+        combine: {
+          type:        'boolean',
+          description: 'true (default) = merge all sheets into one PDF. ' +
+                       'false = one PDF file per sheet.',
+          default:     true
+        },
+        colorMode: {
+          type:        'string',
+          description: 'Color output: "Color" (default), "GrayScale", "BlackAndWhite".',
+          default:     'Color'
+        },
+        rasterQuality: {
+          type:        'string',
+          description: 'Raster image quality: "Draft", "Low", "Medium", "High" (default), "Presentation".',
+          default:     'High'
+        }
+      },
+      required: []
+    }
   }
 ];
 

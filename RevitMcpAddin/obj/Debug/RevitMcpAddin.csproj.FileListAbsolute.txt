@@ -19,3 +19,4 @@ D:\Test\RevitMcpAddin\bin\Debug\CommunityToolkit.Mvvm.dll
 D:\Test\RevitMcpAddin\bin\Debug\Newtonsoft.Json.dll
 D:\Test\RevitMcpAddin\bin\Debug\Revit.Async.dll
 D:\Test\RevitMcpAddin\obj\Debug\RevitMcp.3C6020DC.Up2Date
+D:\Test\RevitMcpAddin\obj\Debug\RevitMcpAddin.sourcelink.json

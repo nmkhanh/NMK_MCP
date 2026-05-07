@@ -47,5 +47,19 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
+	<Target Name="CopyBuildOutput" AfterTargets="Build">
+		<ItemGroup>
+			<!-- Lấy toàn bộ output -->
+			<AllOutputFiles Include="$(TargetDir)**\*.*" />
 
+		</ItemGroup>
+		<Copy SourceFiles="@(AllOutputFiles)" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\2026\RevitMcpAddin\" SkipUnchangedFiles="false" />
+	</Target>
+	<Target Name="CopyRebuildOutput" AfterTargets="Rebuild">
+		<ItemGroup>
+			<!-- Lấy toàn bộ output -->
+			<AllOutputFiles Include="$(TargetDir)**\*.*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(AllOutputFiles)" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\2026\RevitMcpAddin\" SkipUnchangedFiles="false" />
+	</Target>
 </Project>
