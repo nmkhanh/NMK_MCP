@@ -1,0 +1,46 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.temp
+.test-tmp*/
+.playwright-mcp/
+*-sign.png
+
+# Local planning artifacts
+plans/*.local
+
+# Private Claude context (business-sensitive notes)
+.claude/
+.agents/
+
+# Legacy file (merged into CLAUDE.md)
+AGENTS.md
+
+# Build artifacts (attach to releases, don't commit)
+pdf-toolkit-mcp.zip
+*.mcpb
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db

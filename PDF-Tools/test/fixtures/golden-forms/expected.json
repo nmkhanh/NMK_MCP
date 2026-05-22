@@ -1,0 +1,122 @@
+{
+  "_notes": "Golden-set ground truth for signature-zone detection. Zones are hand-labeled approximations — where a reasonable human signer would expect to place their signature. Coordinates use top-left origin in points (72pt = 1 inch). These regions intentionally sit on the blank signing/date surfaces, not on the printed label text below them.",
+  "fixtures": [
+    {
+      "id": "example-fw9",
+      "source": "local",
+      "path": "../../../example-fw9.pdf",
+      "description": "Older IRS W-9 shipped with the repo — 4-page layout",
+      "min_score": 1,
+      "expected_zones": [
+        {
+          "type": "signature",
+          "page": 1,
+          "note": "Signature of U.S. person blank signing line after the arrow marker — above the label text",
+          "x_min": 120, "x_max": 385,
+          "y_min": 512, "y_max": 530,
+          "min_iou": 0.25
+        },
+        {
+          "type": "date",
+          "page": 1,
+          "note": "Date blank line to the right of its arrow marker — above the Date label",
+          "x_min": 400, "x_max": 560,
+          "y_min": 512, "y_max": 530,
+          "min_iou": 0.25
+        }
+      ]
+    },
+    {
+      "id": "irs-fw9-2024",
+      "source": "url",
+      "url": "https://www.irs.gov/pub/irs-pdf/fw9.pdf",
+      "description": "Current IRS W-9 (rev 3-2024)",
+      "min_score": 0.5,
+      "expected_zones": [
+        {
+          "type": "signature",
+          "page": 1,
+          "note": "Signature of U.S. person line — Part II Certification block",
+          "x_min": 100, "x_max": 500,
+          "y_min": 540, "y_max": 640,
+          "min_iou": 0.2
+        },
+        {
+          "type": "date",
+          "page": 1,
+          "note": "Date field to the right of the signature",
+          "x_min": 380, "x_max": 570,
+          "y_min": 540, "y_max": 640,
+          "min_iou": 0.15
+        }
+      ]
+    },
+    {
+      "id": "sandy-springs-business-license-2024",
+      "source": "url",
+      "url": "https://up.sandyspringsga.gov/sites/default/files/2024-06/New%20Business%20License%20Application.pdf",
+      "sha256": "ea8d22947cd13888d516e572b8d290c3a84b14b1ef707e0c7b4023f3e12b8230",
+      "required_for_release": true,
+      "description": "City of Sandy Springs New Business License Application - non-fillable multi-form packet",
+      "min_score": 1,
+      "expected_zones": [
+        {
+          "type": "date",
+          "page": 5,
+          "note": "Acknowledgement page Printed Name / Date row",
+          "x_min": 380, "x_max": 505,
+          "y_min": 418, "y_max": 448,
+          "min_iou": 0.2
+        },
+        {
+          "type": "signature",
+          "page": 5,
+          "note": "Acknowledgement page Signature row",
+          "x_min": 25, "x_max": 290,
+          "y_min": 458, "y_max": 490,
+          "min_iou": 0.2
+        },
+        {
+          "type": "signature",
+          "page": 5,
+          "note": "Home-Based Businesses acknowledgement signature row",
+          "x_min": 45, "x_max": 310,
+          "y_min": 705, "y_max": 735,
+          "min_iou": 0.2
+        },
+        {
+          "type": "date",
+          "page": 5,
+          "note": "Home-Based Businesses acknowledgement date row",
+          "x_min": 310, "x_max": 445,
+          "y_min": 705, "y_max": 735,
+          "min_iou": 0.2
+        },
+        {
+          "type": "signature",
+          "page": 7,
+          "note": "Lawful presence affidavit Applicant Signature row",
+          "x_min": 40, "x_max": 300,
+          "y_min": 620, "y_max": 650,
+          "min_iou": 0.2
+        },
+        {
+          "type": "date",
+          "page": 7,
+          "note": "Lawful presence affidavit Date row",
+          "x_min": 365, "x_max": 500,
+          "y_min": 620, "y_max": 650,
+          "min_iou": 0.2
+        },
+        {
+          "type": "signature",
+          "page": 8,
+          "note": "Private employer affidavit Signature of Authorized Officer or Agent row",
+          "x_min": 25, "x_max": 305,
+          "y_min": 535, "y_max": 565,
+          "min_iou": 0.2
+        }
+      ]
+    }
+  ]
+}

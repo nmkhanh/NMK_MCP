@@ -173,6 +173,57 @@ const TOOLS = [
       },
       required: ['sheetIds']
     }
+  },
+
+  // ── export_sheet_to_cad ───────────────────────────────────
+  {
+    name:        'export_sheet_to_cad',
+    description: 'Export Revit sheets to individual DWG or DXF files. ' +
+                 'Supports named export templates (ExportDWGSettings) stored in the Revit file. ' +
+                 'Sheets are identified by their Revit element ID — use get_elements with ' +
+                 'category="Sheets" to discover IDs. ' +
+                 'Use list_cad_export_templates to see available template names. ' +
+                 'Each output file is named after the sheet\'s SheetNumber.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        sheetIds: {
+          type:        'array',
+          items:       { type: 'string' },
+          description: 'Revit element IDs of the sheets to export (e.g. ["123456","789012"]). ' +
+                       'Required — use get_elements with category="Sheets" to get valid IDs.'
+        },
+        outputFolder: {
+          type:        'string',
+          description: 'Absolute folder path where DWG/DXF files will be saved. ' +
+                       'Defaults to the document\'s own folder, or Desktop if unsaved.'
+        },
+        templateName: {
+          type:        'string',
+          description: 'Name of a named DWG export template stored in the Revit file. ' +
+                       'Use list_cad_export_templates to see available names. ' +
+                       'If omitted or not found, Revit default export options are used.'
+        },
+        fileFormat: {
+          type:        'string',
+          description: 'Output file format: "DWG" (default) or "DXF".',
+          default:     'DWG'
+        }
+      },
+      required: ['sheetIds']
+    }
+  },
+
+  // ── list_cad_export_templates ─────────────────────────────
+  {
+    name:        'list_cad_export_templates',
+    description: 'Lists all named DWG export templates (ExportDWGSettings) stored in the ' +
+                 'active Revit document. Use the returned template names with export_sheet_to_cad.',
+    inputSchema: {
+      type:       'object',
+      properties: {},
+      required:   []
+    }
   }
 ];
 

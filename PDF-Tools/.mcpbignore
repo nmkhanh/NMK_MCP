@@ -1,0 +1,77 @@
+# Ignore other packages
+*.dxt
+*.mcpb
+*.zip
+
+# Ignore sharing/distribution folders
+pdf-filler-mcp-share/
+pdf-toolkit-mcp-share/
+pdf-filler-mcp/
+_config.yml
+_includes/
+
+# Ignore test files
+test-*.pdf
+*-test.pdf
+
+# Ignore temporary files
+*.tmp
+*.log
+.DS_Store
+
+# Ignore git files (already handled by default)
+.git/
+.gitignore
+
+# Ignore local issue tracker and generated test state
+.beads/
+.playwright-mcp/
+.test-tmp*/
+*-sign.png
+
+# Ignore old/backup files
+*.backup
+*.old
+manifest.dxt.backup.json
+
+# Trim pdfjs-dist (only legacy/build/ is used at runtime)
+node_modules/pdfjs-dist/build/
+node_modules/pdfjs-dist/web/
+node_modules/pdfjs-dist/types/
+node_modules/pdfjs-dist/image_decoders/
+node_modules/pdfjs-dist/cmaps/
+node_modules/pdfjs-dist/wasm/
+
+# UI source (only dist-ui/ is needed at runtime)
+ui/
+vite.config.mjs
+
+# Dev dependencies not needed in MCPB bundle (Vite + transitive deps)
+node_modules/.vite/
+node_modules/vite/
+node_modules/vite-plugin-singlefile/
+node_modules/vitest/
+node_modules/@vitest/
+node_modules/@modelcontextprotocol/ext-apps/
+node_modules/@oven/
+node_modules/@esbuild/
+node_modules/rollup/
+node_modules/@rollup/
+node_modules/postcss/
+node_modules/esbuild/
+
+# Docs and dev files
+.agents/
+.github/
+docs/
+test/
+scripts/
+plans/
+package-lock.json
+package-for-friend.js
+AGENTS.md
+CLAUDE.md
+.claude/
+DESIGN.md
+TODOS.md
+example-fw9.pdf

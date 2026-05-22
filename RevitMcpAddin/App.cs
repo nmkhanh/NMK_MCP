@@ -61,7 +61,9 @@ namespace RevitMcpAddin
                     .Register(new GetElementsHandler(RevitSvc))
                     .Register(new CreateWallHandler(RevitSvc))
                     .Register(new SelectElementsHandler(RevitSvc))
-                    .Register(new PrintSheetHandler(RevitSvc));
+                    .Register(new PrintSheetHandler(RevitSvc))
+                    .Register(new ExportCadHandler(RevitSvc))
+                    .Register(new ListCadExportTemplatesHandler(RevitSvc));
 
                 // ── 4. Create and start the embedded HTTP/SSE server ─────
                 //  DefaultPrefix  = "http://+:5000/"      → LAN + loopback (needs URL ACL)

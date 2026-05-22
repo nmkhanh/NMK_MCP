@@ -1,0 +1,39 @@
+{
+  "name": "pdf-tools",
+  "version": "0.8.6",
+  "description": "PDF Tools MCP server for Claude Desktop",
+  "type": "module",
+  "main": "server/index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev:ui": "vite --host 127.0.0.1",
+    "smoke:ui-dev": "node scripts/dev-ui-smoke.mjs",
+    "smoke:ui-sign": "node scripts/dev-ui-sign-smoke.mjs",
+    "smoke:ui-sign-rotated": "node scripts/dev-ui-rotated-sign-smoke.mjs",
+    "smoke:ui-inspect": "node scripts/dev-ui-inspect-smoke.mjs",
+    "smoke:ui-preview-zone": "node scripts/dev-ui-preview-zone-smoke.mjs",
+    "smoke:ui-draw": "node scripts/dev-ui-draw-smoke.mjs",
+    "build:ui": "vite build",
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Open-Document-Alliance/PDF-Tools.git"
+  },
+  "homepage": "https://github.com/Open-Document-Alliance/PDF-Tools",
+  "bugs": {
+    "url": "https://github.com/Open-Document-Alliance/PDF-Tools/issues"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@napi-rs/canvas": "^0.1.99",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "5.4.624"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.7.0",
+    "vite": "^8.0.9",
+    "vite-plugin-singlefile": "^2.3.3",
+    "vitest": "^4.1.4"
+  }
+}
