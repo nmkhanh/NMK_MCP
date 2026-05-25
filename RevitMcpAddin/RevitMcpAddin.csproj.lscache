@@ -57,6 +57,7 @@ App.cs
 Command.cs
 Mcp/Handlers/
  CreateWallHandler.cs
+ ExportCadHandler.cs
  GetDocumentHandler.cs
  GetElementsHandler.cs
  IToolHandler.cs
@@ -70,6 +71,7 @@ Mcp/
 Models/
  DocumentInfo.cs
  ElementInfo.cs
+ ExportCadModels.cs
  PrintSheetModels.cs
  WallModels.cs
 obj/Debug/
@@ -81,6 +83,7 @@ Services/
  AsyncQueueService.cs
  ExternalEventService.cs
  Functions/
+  F_CADExport.cs
   F_Document.cs
   F_Elements.cs
   F_Print.cs

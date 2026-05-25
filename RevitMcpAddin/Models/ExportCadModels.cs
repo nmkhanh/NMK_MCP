@@ -8,11 +8,11 @@ namespace RevitMcpAddin.Models
     public class ExportCadRequest
     {
         /// <summary>
-        /// Revit element IDs of the ViewSheets to export (e.g. ["123456", "789012"]).
+        /// Revit element ID of the ViewSheet to export (e.g. "123456").
         /// Required — if null or empty, the request is rejected.
         /// </summary>
-        [JsonProperty("sheetIds")]
-        public List<string>? SheetIds { get; set; }
+        [JsonProperty("sheetId")]
+        public string? SheetId { get; set; }
 
         /// <summary>
         /// Absolute folder path where DWG/DXF file(s) will be written.

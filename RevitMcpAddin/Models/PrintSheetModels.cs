@@ -8,11 +8,11 @@ namespace RevitMcpAddin.Models
     public class PrintSheetRequest
     {
         /// <summary>
-        /// Revit element IDs of the ViewSheets to print (e.g. ["123456", "789012"]).
+        /// Revit element ID of the ViewSheet to print (e.g. "123456").
         /// Required — if null or empty, the request is rejected and nothing is printed.
         /// </summary>
-        [JsonProperty("sheetIds")]
-        public List<string>? SheetIds { get; set; }
+        [JsonProperty("sheetId")]
+        public string? SheetId { get; set; }
 
         /// <summary>
         /// Absolute folder path where PDF file(s) will be written.

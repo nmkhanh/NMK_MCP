@@ -55,20 +55,19 @@ namespace RevitMcpAddin.Mcp.Handlers
         public McpToolDefinition GetDefinition() => new()
         {
             Name        = ToolName,
-            Description = "Export Revit sheets to individual PDF files using PDF24 virtual printer. " +
-                          "Sheets are identified by their Revit element ID (use get_elements with category='Sheets'). " +
-                          "Each PDF is named after the sheet's SheetNumber. " +
+            Description = "Export a single Revit sheet to a PDF file using PDF24 virtual printer. " +
+                          "The sheet is identified by its Revit element ID (use get_elements with category='Sheets'). " +
+                          "The PDF is named after the sheet's SheetNumber. " +
                           "Paper size is auto-detected from the title block dimensions.",
             InputSchema = new
             {
                 type       = "object",
                 properties = new
                 {
-                    sheetIds = new
+                    sheetId = new
                     {
-                        type        = "array",
-                        items       = new { type = "string" },
-                        description = "Revit element IDs of the sheets to print (e.g. [\"123456\",\"789012\"]). " +
+                        type        = "string",
+                        description = "Revit element ID of the sheet to print (e.g. \"123456\"). " +
                                       "Required — use get_elements with category='Sheets' to discover IDs."
                     },
                     outputFolder = new
@@ -90,7 +89,7 @@ namespace RevitMcpAddin.Mcp.Handlers
                         @default    = "High"
                     }
                 },
-                required = new[] { "sheetIds" }
+                required = new[] { "sheetId" }
             }
         };
 
@@ -100,11 +99,8 @@ namespace RevitMcpAddin.Mcp.Handlers
             {
                 var request = new PrintSheetRequest
                 {
-                    SheetIds      = (arguments?["sheetIds"] as JArray)
-                                        ?.Select(t => t.Value<string>()!)
-                                        .Where(s => !string.IsNullOrWhiteSpace(s))
-                                        .ToList(),
-                    OutputFolder   = arguments?["outputFolder"]?.Value<string>(),
+                    SheetId      = arguments?["sheetId"]?.Value<string>(),
+                    OutputFolder = arguments?["outputFolder"]?.Value<string>(),
                     ColorMode      = arguments?["colorMode"]?.Value<string>()     ?? "Color",
                     RasterQuality  = arguments?["rasterQuality"]?.Value<string>() ?? "High",
                 };

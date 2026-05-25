@@ -141,18 +141,17 @@ const TOOLS = [
   // ── print_sheet_to_pdf ────────────────────────────────────
   {
     name:        'print_sheet_to_pdf',
-    description: 'Export Revit sheets to individual PDF files using PDF24 virtual printer. ' +
-                 'Sheets are identified by their Revit element ID — use get_elements with ' +
+    description: 'Export a single Revit sheet to a PDF file using PDF24 virtual printer. ' +
+                 'The sheet is identified by its Revit element ID — use get_elements with ' +
                  'category="Sheets" to discover IDs. ' +
-                 'Each PDF is named after the sheet\'s SheetNumber. ' +
+                 'The PDF is named after the sheet\'s SheetNumber. ' +
                  'Paper size is auto-detected from the title block dimensions.',
     inputSchema: {
       type:       'object',
       properties: {
-        sheetIds: {
-          type:        'array',
-          items:       { type: 'string' },
-          description: 'Revit element IDs of the sheets to print (e.g. ["123456","789012"]). ' +
+        sheetId: {
+          type:        'string',
+          description: 'Revit element ID of the sheet to print (e.g. "123456"). ' +
                        'Required — use get_elements with category="Sheets" to get valid IDs.'
         },
         outputFolder: {
@@ -171,26 +170,25 @@ const TOOLS = [
           default:     'High'
         }
       },
-      required: ['sheetIds']
+      required: ['sheetId']
     }
   },
 
   // ── export_sheet_to_cad ───────────────────────────────────
   {
     name:        'export_sheet_to_cad',
-    description: 'Export Revit sheets to individual DWG or DXF files. ' +
+    description: 'Export a single Revit sheet to a DWG or DXF file. ' +
                  'Supports named export templates (ExportDWGSettings) stored in the Revit file. ' +
-                 'Sheets are identified by their Revit element ID — use get_elements with ' +
+                 'The sheet is identified by its Revit element ID — use get_elements with ' +
                  'category="Sheets" to discover IDs. ' +
                  'Use list_cad_export_templates to see available template names. ' +
-                 'Each output file is named after the sheet\'s SheetNumber.',
+                 'The output file is named after the sheet\'s SheetNumber.',
     inputSchema: {
       type:       'object',
       properties: {
-        sheetIds: {
-          type:        'array',
-          items:       { type: 'string' },
-          description: 'Revit element IDs of the sheets to export (e.g. ["123456","789012"]). ' +
+        sheetId: {
+          type:        'string',
+          description: 'Revit element ID of the sheet to export (e.g. "123456"). ' +
                        'Required — use get_elements with category="Sheets" to get valid IDs.'
         },
         outputFolder: {
@@ -210,7 +208,7 @@ const TOOLS = [
           default:     'DWG'
         }
       },
-      required: ['sheetIds']
+      required: ['sheetId']
     }
   },
 

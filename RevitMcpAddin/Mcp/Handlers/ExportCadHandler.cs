@@ -57,21 +57,20 @@ namespace RevitMcpAddin.Mcp.Handlers
         public McpToolDefinition GetDefinition() => new()
         {
             Name        = ToolName,
-            Description = "Export Revit sheets to individual DWG or DXF files. " +
+            Description = "Export a single Revit sheet to a DWG or DXF file. " +
                           "Supports named export templates (ExportDWGSettings) stored in the Revit file. " +
-                          "Sheets are identified by their Revit element ID — use get_elements with category='Sheets'. " +
+                          "The sheet is identified by its Revit element ID — use get_elements with category='Sheets'. " +
                           "Use list_cad_export_templates to discover available template names. " +
-                          "Each output file is named after the sheet's SheetNumber.",
+                          "The output file is named after the sheet's SheetNumber.",
             InputSchema = new
             {
                 type       = "object",
                 properties = new
                 {
-                    sheetIds = new
+                    sheetId = new
                     {
-                        type        = "array",
-                        items       = new { type = "string" },
-                        description = "Revit element IDs of the sheets to export (e.g. [\"123456\",\"789012\"]). " +
+                        type        = "string",
+                        description = "Revit element ID of the sheet to export (e.g. \"123456\"). " +
                                       "Required — use get_elements with category='Sheets' to discover IDs."
                     },
                     outputFolder = new
@@ -94,7 +93,7 @@ namespace RevitMcpAddin.Mcp.Handlers
                         @default    = "DWG"
                     }
                 },
-                required = new[] { "sheetIds" }
+                required = new[] { "sheetId" }
             }
         };
 
@@ -104,10 +103,7 @@ namespace RevitMcpAddin.Mcp.Handlers
             {
                 var request = new ExportCadRequest
                 {
-                    SheetIds     = (arguments?["sheetIds"] as JArray)
-                                       ?.Select(t => t.Value<string>()!)
-                                       .Where(s => !string.IsNullOrWhiteSpace(s))
-                                       .ToList(),
+                    SheetId      = arguments?["sheetId"]?.Value<string>(),
                     OutputFolder = arguments?["outputFolder"]?.Value<string>(),
                     TemplateName = arguments?["templateName"]?.Value<string>(),
                     FileFormat   = arguments?["fileFormat"]?.Value<string>() ?? "DWG",

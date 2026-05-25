@@ -44,12 +44,12 @@ namespace RevitMcpAddin.Services
                   : request.OutputFolder;
         Directory.CreateDirectory(outputFolder);
 
-        // ── 2. Validate sheet IDs ─────────────────────────────────
-        if (request.SheetIds == null || request.SheetIds.Count == 0)
+        // ── 2. Resolve target sheet by element ID ─────────────────
+        if (string.IsNullOrWhiteSpace(request.SheetId))
           return new
           {
             success = false,
-            message = "'sheetIds' is required. Provide a list of Revit element IDs for the sheets to export. " +
+            message = "'sheetId' is required. Provide the Revit element ID of the sheet to export. " +
                       "Use get_elements with category='Sheets' to discover sheet IDs."
           };
 
@@ -59,24 +59,13 @@ namespace RevitMcpAddin.Services
                   .Where(s => !s.IsTemplate)
                   .ToDictionary(s => s.Id.ToString(), StringComparer.OrdinalIgnoreCase);
 
-        var missing = request.SheetIds
-                  .Where(id => !allSheets.ContainsKey(id))
-                  .ToList();
-        if (missing.Count > 0)
-          Trace.WriteLine($"[RevitMCP][CAD] Sheet IDs not found: {string.Join(", ", missing)}");
-
-        var targetSheets = request.SheetIds
-                  .Where(id => allSheets.ContainsKey(id))
-                  .Select(id => allSheets[id])
-                  .ToList();
-
-        if (targetSheets.Count == 0)
+        if (!allSheets.TryGetValue(request.SheetId.Trim(), out var targetSheet))
           return new
           {
-            success      = false,
-            requestedIds = request.SheetIds,
-            message      = "None of the specified sheet IDs were found in the active document. " +
-                           "Use get_elements with category='Sheets' to get valid element IDs."
+            success     = false,
+            requestedId = request.SheetId,
+            message     = "The specified sheet ID was not found in the active document. " +
+                          "Use get_elements with category='Sheets' to get valid element IDs."
           };
 
         // ── 3. Resolve export format ──────────────────────────────
@@ -102,65 +91,51 @@ namespace RevitMcpAddin.Services
             Trace.WriteLine($"[RevitMCP][CAD] Using export template: '{exportSettings.Name}'");
         }
 
-        // ── 5. Export each sheet ──────────────────────────────────
-        var sheetResults = new List<object>();
-        var outputFiles  = new List<string>();
+        // ── 5. Export the single sheet ────────────────────────────
+        var safeName   = SanitizeFileName(targetSheet.SheetNumber);
+        var outputFile = Path.Combine(outputFolder, safeName + ext);
+        if (File.Exists(outputFile)) File.Delete(outputFile);
 
-        foreach (var sheet in targetSheets)
+        var viewIds = new List<ElementId> { targetSheet.Id };
+        bool exported;
+
+        if (isDxf)
         {
-          var safeName   = SanitizeFileName(sheet.SheetNumber);
-          var outputFile = Path.Combine(outputFolder, safeName + ext);
-
-          if (File.Exists(outputFile)) File.Delete(outputFile);
-
-          var viewIds = new List<ElementId> { sheet.Id };
-          bool exported;
-
-          if (isDxf)
-          {
-            var opts = new DXFExportOptions();
-            exported = doc.Export(outputFolder, safeName, viewIds, opts);
-          }
-          else
-          {
-            var opts = exportSettings?.GetDWGExportOptions() ?? new DWGExportOptions();
-            opts.MergedViews = false;
-            exported = doc.Export(outputFolder, safeName, viewIds, opts);
-          }
-
-          if (!exported)
-          {
-            Trace.WriteLine(
-                $"[RevitMCP][CAD] Export returned false for sheet {sheet.SheetNumber}.");
-          }
-          else
-          {
-            outputFiles.Add(outputFile);
-            Trace.WriteLine($"[RevitMCP][CAD] Sheet {sheet.SheetNumber} → {outputFile}");
-          }
-
-          sheetResults.Add(new
-          {
-            number   = sheet.SheetNumber,
-            name     = sheet.Name,
-            file     = exported ? outputFile : (string?)null,
-            exported
-          });
+          var opts = new DXFExportOptions();
+          exported = doc.Export(outputFolder, safeName, viewIds, opts);
         }
+        else
+        {
+          var opts = exportSettings?.GetDWGExportOptions() ?? new DWGExportOptions();
+          opts.MergedViews = true;
+          exported = doc.Export(outputFolder, safeName, viewIds, opts);
+        }
+
+        if (exported)
+          Trace.WriteLine($"[RevitMCP][CAD] Sheet {targetSheet.SheetNumber} → {outputFile}");
+        else
+          Trace.WriteLine($"[RevitMCP][CAD] Export returned false for sheet {targetSheet.SheetNumber}.");
 
         var usedTemplate = exportSettings?.Name ?? (isDxf ? "(DXF default)" : "(DWG default)");
 
         return (object)new
         {
           success      = true,
-          sheetCount   = targetSheets.Count,
-          exportedCount = outputFiles.Count,
+          exported,
           fileFormat   = isDxf ? "DXF" : "DWG",
           template     = usedTemplate,
-          sheets       = sheetResults,
+          sheet        = new
+          {
+            number   = targetSheet.SheetNumber,
+            name     = targetSheet.Name,
+            file     = exported ? outputFile : (string?)null,
+            exported
+          },
           outputFolder,
-          outputFiles,
-          message      = $"Exported {outputFiles.Count}/{targetSheets.Count} sheet(s) to {(isDxf ? "DXF" : "DWG")} using template '{usedTemplate}'."
+          outputFile   = exported ? outputFile : (string?)null,
+          message      = exported
+              ? $"Exported sheet '{targetSheet.SheetNumber}' to {(isDxf ? "DXF" : "DWG")} using template '{usedTemplate}'."
+              : $"Export failed for sheet '{targetSheet.SheetNumber}'."
         };
 
       }, ct, timeoutMs: CadExportTimeoutMs);

@@ -57,13 +57,13 @@ namespace RevitMcpAddin.Services
         // ── 2a. Configure PDF24 for silent auto-save (suppress dialogs) ──
         PDF24Setup.SetAutoSave(outputFolder);
 
-        // ── 3. Collect target sheets by element ID ────────────────
-        // SheetIds is REQUIRED. If missing/empty, reject immediately.
-        if (request.SheetIds == null || request.SheetIds.Count == 0)
+        // ── 3. Resolve target sheet by element ID ─────────────────
+        // SheetId is REQUIRED.
+        if (string.IsNullOrWhiteSpace(request.SheetId))
           return new
           {
             success = false,
-            message = "'sheetIds' is required. Provide a list of Revit element IDs for the sheets to print. " +
+            message = "'sheetId' is required. Provide the Revit element ID of the sheet to print. " +
                       "Use get_elements with category 'Sheets' to discover sheet IDs."
           };
 
@@ -73,37 +73,21 @@ namespace RevitMcpAddin.Services
                   .Where(s => !s.IsTemplate)
                   .ToDictionary(s => s.Id.ToString(), StringComparer.OrdinalIgnoreCase);
 
-        var missing = request.SheetIds
-                  .Where(id => !allSheets.ContainsKey(id))
-                  .ToList();
-        if (missing.Count > 0)
-          Trace.WriteLine($"[RevitMCP][PRINT] Sheet IDs not found: {string.Join(", ", missing)}");
-
-        var targetSheets = request.SheetIds
-                  .Where(id => allSheets.ContainsKey(id))
-                  .Select(id => allSheets[id])
-                  .ToList();
-
-        if (targetSheets.Count == 0)
+        if (!allSheets.TryGetValue(request.SheetId.Trim(), out var targetSheet))
           return new
           {
-            success       = false,
-            requestedIds  = request.SheetIds,
-            message       = "None of the specified sheet IDs were found in the active document. " +
-                            "Use get_elements with category 'Sheets' to get valid element IDs."
+            success = false,
+            requestedId = request.SheetId,
+            message = "The specified sheet ID was not found in the active document. " +
+                          "Use get_elements with category 'Sheets' to get valid element IDs."
           };
 
-        // ── 3a. Pre-create custom Windows paper forms for every unique sheet size ─
-        //        Forms use portrait-normalized dimensions (short×long) so that both
-        //        landscape and portrait variants of the same paper share one form.
+        // ── 3a. Pre-create custom Windows paper form for the sheet size ──────────
         //        Must run BEFORE pm.SelectNewPrintDriver so the driver loads them.
-        var distinctDims = targetSheets
-                  .Select(s => GetSheetDimensionsMm(doc, s))
-                  .Select(d => (W: (int)Math.Round(d.WidthMm), H: (int)Math.Round(d.HeightMm)))
-                  .Distinct()
-                  .ToList();
-        foreach (var (w, h) in distinctDims)
         {
+          var (sheetW, sheetH) = GetSheetDimensionsMm(doc, targetSheet);
+          var w = (int)Math.Round(sheetW);
+          var h = (int)Math.Round(sheetH);
           var formName = $"RMCP_{w}x{h}";
           try
           {
@@ -127,31 +111,27 @@ namespace RevitMcpAddin.Services
         // SubmitPrint() does NOT modify the model and MUST run OUTSIDE a Transaction.
         var pm = doc.PrintManager;
 
-        var sheetResults = new List<object>();
+        // ── 5. Print the single sheet ─────────────────────────────
+        var (wMm, hMm) = GetSheetDimensionsMm(doc, targetSheet);
+        var safeName = SanitizeFileName(targetSheet.SheetNumber);
+        var outputFile = Path.Combine(outputFolder, safeName + ".pdf");
+        if (File.Exists(outputFile)) File.Delete(outputFile);
+        PDF24Setup.SetAutoSave(outputFolder, safeName);
 
-        // ── 5. Individual: one PDF per sheet (always) ─────────────
-        var outputFiles = new List<string>();
+        var viewSet = new ViewSet();
+        viewSet.Insert(targetSheet);
 
-        foreach (var sheet in targetSheets)
+        // Basic PrintManager properties — set before the transaction group
+        pm.PrintRange = PrintRange.Select;
+        pm.PrintToFile = true;
+        pm.CombinedFile = true;   // must be true when PrintRange = Select
+        pm.PrintToFileName = outputFile;
+
+        var tempName = $"RMCP_{safeName}";
+
+        try
         {
-          var (wMm, hMm) = GetSheetDimensionsMm(doc, sheet);
-          var safeName = SanitizeFileName(sheet.SheetNumber);
-          var outputFile = Path.Combine(outputFolder, safeName + ".pdf");
-          if (File.Exists(outputFile)) File.Delete(outputFile);
-          PDF24Setup.SetAutoSave(outputFolder, safeName);
-
-          var viewSet = new ViewSet();
-          viewSet.Insert(sheet);
-
-          // Basic PrintManager properties — set before the transaction group
-          pm.PrintRange = PrintRange.Select;
-          pm.PrintToFile = true;
-          pm.CombinedFile = true;   // must be true when PrintRange = Select
-          pm.PrintToFileName = outputFile;
-
-          var tempName = $"RMCP_{safeName}";
-
-          using (var g = new TransactionGroup(doc, $"RevitMCP: Print - {sheet.SheetNumber}"))
+          using (var g = new TransactionGroup(doc, $"RevitMCP: Print - {targetSheet.SheetNumber}"))
           {
             g.Start();
 
@@ -159,30 +139,51 @@ namespace RevitMcpAddin.Services
             using (var tx = new Transaction(doc, "Configure Print"))
             {
               tx.Start();
+
               pm.SelectNewPrintDriver(printerName);
-              var ps = pm.PrintSetup;
-              ps.SaveAs(tempName);
-              var savedSetting = doc.GetPrintSettingIds()
-                        .Select(id => doc.GetElement(id) as PrintSetting)
-                        .First(x => x?.Name == tempName);
-              ps.CurrentPrintSetting = savedSetting;
-              var pp = ps.CurrentPrintSetting!.PrintParameters;
+              pm.Apply();
+              doc.Regenerate();
+
+              InSessionPrintSetting printSetting = pm.PrintSetup.InSession;
+              pm.Apply();
+              doc.Regenerate();
+
+              var pp = printSetting.PrintParameters;
+
               pp.ColorDepth = ParseColorDepth(request.ColorMode);
               pp.RasterQuality = ParseRasterQuality(request.RasterQuality);
               pp.ZoomType = ZoomType.Zoom;
               pp.Zoom = 100;
-              pp.PaperPlacement = PaperPlacementType.LowerLeft;
+
+              pp.PaperPlacement = PaperPlacementType.Margins;
+              pp.MarginType = MarginType.NoMargin;
+
               pp.HideScopeBoxes = true;
               pp.HideUnreferencedViewTags = true;
               pp.HideReforWorkPlanes = true;
               pp.HideCropBoundaries = true;
-              pp.PaperSize = FindBestPaperSize(pm, wMm, hMm);
-              pp.PageOrientation = wMm > hMm
-                        ? PageOrientationType.Landscape
-                        : PageOrientationType.Portrait;
+
+              var paper = FindBestPaperSize(pm, wMm, hMm);
+
+              if (paper != null)
+                pp.PaperSize = paper;
+
+              pp.PageOrientation =
+                  wMm > hMm
+                  ? PageOrientationType.Landscape
+                  : PageOrientationType.Portrait;
+
+              pm.PrintSetup.SaveAs(tempName);
               pm.Apply();
-              ps.Save();
-              doc.Print(viewSet, true);
+              doc.Regenerate();
+
+              //pm.PrintSetup.CurrentPrintSetting = printSetting;
+              pm.PrintSetup.CurrentPrintSetting = doc.GetPrintSettingIds().Select(x => doc.GetElement(x) as Autodesk.Revit.DB.PrintSetting).First(x => x.Name == tempName);
+              pm.Apply();
+              doc.Regenerate();
+
+              //doc.Print(viewSet, true);
+              pm.SubmitPrint(targetSheet);
               tx.Commit();
             }
 
@@ -201,30 +202,30 @@ namespace RevitMcpAddin.Services
 
             g.Assimilate();
           }
-
-          outputFiles.Add(outputFile);
-          Trace.WriteLine($"[RevitMCP][PRINT] Sheet {sheet.SheetNumber} → {outputFile}");
-
-          sheetResults.Add(new
-          {
-            number = sheet.SheetNumber,
-            name = sheet.Name,
-            widthMm = Math.Round(wMm, 1),
-            heightMm = Math.Round(hMm, 1),
-            paperSize = AutoDetectPaperLabel(wMm, hMm),
-            file = outputFile
-          });
         }
+        catch (Exception ex)
+        {
+          File.WriteAllText($@"C:\ProgramData\Autodesk\Revit\Addins\2025\RevitMcpAddin\{ex.Message}.txt", $"{ex.Message}");
+        }
+
+        Trace.WriteLine($"[RevitMCP][PRINT] Sheet {targetSheet.SheetNumber} → {outputFile}");
 
         return (object)new
         {
           success = true,
-          sheetCount = targetSheets.Count,
-          sheets = sheetResults,
+          sheet = new
+          {
+            number = targetSheet.SheetNumber,
+            name = targetSheet.Name,
+            widthMm = Math.Round(wMm, 1),
+            heightMm = Math.Round(hMm, 1),
+            paperSize = AutoDetectPaperLabel(wMm, hMm),
+            file = outputFile
+          },
           printer = printerName,
           outputFolder,
-          outputFiles,
-          message = $"Submitted {targetSheets.Count} sheet(s) to '{printerName}'."
+          outputFile,
+          message = $"Printed sheet '{targetSheet.SheetNumber}' to '{printerName}'."
         };
 
       }, ct, timeoutMs: PrintTimeoutMs);
