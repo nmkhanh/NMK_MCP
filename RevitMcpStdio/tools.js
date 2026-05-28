@@ -94,7 +94,2107 @@ const TOOLS = [
     }
   },
 
-  // ── create_wall ───────────────────────────────────────────
+  // --- get_project_info ---------------------------------------------------
+  {
+    name:        'get_project_info',
+    description: 'Returns Revit project information, document metadata, and active view summary.',
+    inputSchema: { type: 'object', properties: {}, required: [] }
+  },
+
+  // --- list_categories ----------------------------------------------------
+  {
+    name:        'list_categories',
+    description: 'Lists Revit categories, optionally filtered by categoryType.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        categoryType: { type: 'string', description: 'Optional: model, annotation, analytical, or internal.' }
+      },
+      required: []
+    }
+  },
+
+  // --- list_element_types -------------------------------------------------
+  {
+    name:        'list_element_types',
+    description: 'Lists Revit ElementType records, optionally filtered by category and family name.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        category: { type: 'string', description: 'Optional BuiltInCategory suffix, e.g. Walls, Doors, Windows.' },
+        familyName: { type: 'string', description: 'Optional family name exact match.' },
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 500, hard max: 1000.', default: 500 }
+      },
+      required: []
+    }
+  },
+
+  // --- list_family_types --------------------------------------------------
+  {
+    name:        'list_family_types',
+    description: 'Lists Revit FamilySymbol ids for placement tools, optionally filtered by category and family name.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        category: { type: 'string', description: 'Optional BuiltInCategory suffix, e.g. Doors, Windows, Furniture.' },
+        familyName: { type: 'string', description: 'Optional family name exact match.' },
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 500, hard max: 1000.', default: 500 }
+      },
+      required: []
+    }
+  },
+
+  // --- get_family_symbols -------------------------------------------------
+  {
+    name:        'get_family_symbols',
+    description: 'Lists Revit FamilySymbol ids, optionally filtered by category and family name.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        category: { type: 'string', description: 'Optional BuiltInCategory suffix, e.g. Doors, Windows, Furniture.' },
+        familyName: { type: 'string', description: 'Optional family name exact match.' },
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 500, hard max: 1000.', default: 500 }
+      },
+      required: []
+    }
+  },
+
+  // --- activate_family_symbol --------------------------------------------
+  {
+    name:        'activate_family_symbol',
+    description: 'Activates a Revit FamilySymbol so it can be placed.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        symbolId: { type: 'string', description: 'FamilySymbol ElementId.' }
+      },
+      required: ['symbolId']
+    }
+  },
+
+  // --- get_revit_links ----------------------------------------------------
+  {
+    name:        'get_revit_links',
+    description: 'Lists Revit link instances and loaded linked document info.',
+    inputSchema: { type: 'object', properties: {}, required: [] }
+  },
+
+  // --- get_design_options -------------------------------------------------
+  {
+    name:        'get_design_options',
+    description: 'Lists design options in the active Revit document.',
+    inputSchema: { type: 'object', properties: {}, required: [] }
+  },
+
+  // --- create_schedule ----------------------------------------------------
+  {
+    name:        'create_schedule',
+    description: 'Creates a Revit schedule for a category and optional fields.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        category: { type: 'string', description: 'BuiltInCategory suffix, e.g. Walls, Doors, Rooms.' },
+        categoryId: { type: 'string', description: 'Optional category ElementId alternative.' },
+        name: { type: 'string', description: 'Optional schedule name.' },
+        fieldNames: { type: 'array', description: 'Schedulable field names to add.', items: { type: 'string' } }
+      },
+      required: []
+    }
+  },
+
+  // --- update_schedule ----------------------------------------------------
+  {
+    name:        'update_schedule',
+    description: 'Updates a schedule name and/or adds fields.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        scheduleId: { type: 'string', description: 'Schedule ElementId.' },
+        name: { type: 'string', description: 'Optional schedule name.' },
+        fieldNames: { type: 'array', description: 'Schedulable field names to add.', items: { type: 'string' } }
+      },
+      required: ['scheduleId']
+    }
+  },
+
+  // --- get_schedule_data --------------------------------------------------
+  {
+    name:        'get_schedule_data',
+    description: 'Reads visible body cells from a Revit schedule.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        scheduleId: { type: 'string', description: 'Schedule ElementId.' },
+        maxRows: { type: 'integer', description: 'Safety cap. Default: 500, hard max: 5000.', default: 500 },
+        maxColumns: { type: 'integer', description: 'Safety cap. Default: 100, hard max: 500.', default: 100 }
+      },
+      required: ['scheduleId']
+    }
+  },
+
+  // --- export_schedule ----------------------------------------------------
+  {
+    name:        'export_schedule',
+    description: 'Exports a Revit schedule to a text file.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        scheduleId: { type: 'string', description: 'Schedule ElementId.' },
+        outputFolder: { type: 'string', description: 'Absolute output folder. Defaults to document folder or Desktop.' },
+        fileName: { type: 'string', description: 'Optional output file name. Defaults to schedule name plus .txt.' }
+      },
+      required: ['scheduleId']
+    }
+  },
+
+  // --- load_family --------------------------------------------------------
+  {
+    name:        'load_family',
+    description: 'Loads a Revit family file into the active document.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        path: { type: 'string', description: 'Absolute .rfa file path.' },
+        overwriteExisting: { type: 'boolean', description: 'Overwrite existing family when found. Default: true.', default: true },
+        overwriteParameterValues: { type: 'boolean', description: 'Overwrite parameter values when reloading. Default: true.', default: true }
+      },
+      required: ['path']
+    }
+  },
+
+  // --- reload_family ------------------------------------------------------
+  {
+    name:        'reload_family',
+    description: 'Reloads a Revit family file and overwrites existing definitions.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        path: { type: 'string', description: 'Absolute .rfa file path.' },
+        overwriteExisting: { type: 'boolean', description: 'Overwrite existing family when found. Default: true.', default: true },
+        overwriteParameterValues: { type: 'boolean', description: 'Overwrite parameter values when reloading. Default: true.', default: true }
+      },
+      required: ['path']
+    }
+  },
+
+  // --- create_group -------------------------------------------------------
+  {
+    name:        'create_group',
+    description: 'Creates a Revit model group from element ids.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementIds: { type: 'array', description: 'ElementIds to group.', items: { type: 'string' } },
+        name: { type: 'string', description: 'Optional group type name.' }
+      },
+      required: ['elementIds']
+    }
+  },
+
+  // --- update_group -------------------------------------------------------
+  {
+    name:        'update_group',
+    description: 'Updates a Revit group name and/or parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        groupId: { type: 'string', description: 'Group ElementId.' },
+        name: { type: 'string', description: 'Optional group type name.' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['groupId']
+    }
+  },
+
+  // --- create_assembly ----------------------------------------------------
+  {
+    name:        'create_assembly',
+    description: 'Creates a Revit assembly from element ids.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementIds: { type: 'array', description: 'ElementIds to assemble.', items: { type: 'string' } },
+        namingCategoryId: { type: 'string', description: 'Optional naming category id. Defaults to first member category.' },
+        name: { type: 'string', description: 'Optional assembly type name.' }
+      },
+      required: ['elementIds']
+    }
+  },
+
+  // --- update_assembly ----------------------------------------------------
+  {
+    name:        'update_assembly',
+    description: 'Updates a Revit assembly name, members, and/or parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        assemblyId: { type: 'string', description: 'Assembly ElementId.' },
+        name: { type: 'string', description: 'Optional assembly type name.' },
+        addElementIds: { type: 'array', description: 'ElementIds to add.', items: { type: 'string' } },
+        removeElementIds: { type: 'array', description: 'ElementIds to remove.', items: { type: 'string' } },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['assemblyId']
+    }
+  },
+
+  // --- reload_revit_link --------------------------------------------------
+  {
+    name:        'reload_revit_link',
+    description: 'Reloads a Revit link type by type id or link instance id.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        linkTypeId: { type: 'string', description: 'RevitLinkType ElementId.' },
+        linkInstanceId: { type: 'string', description: 'RevitLinkInstance ElementId alternative.' }
+      },
+      required: []
+    }
+  },
+
+  // --- manage_worksets ----------------------------------------------------
+  {
+    name:        'manage_worksets',
+    description: 'Lists, creates, or renames user worksets.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        action: { type: 'string', description: 'list, create, or rename. Default: list.', default: 'list' },
+        worksetId: { type: 'string', description: 'Workset id for rename.' },
+        name: { type: 'string', description: 'Workset name for create/rename.' }
+      },
+      required: []
+    }
+  },
+
+  // --- set_element_design_option -----------------------------------------
+  {
+    name:        'set_element_design_option',
+    description: 'Assigns an element to a design option when the parameter is writable.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Target ElementId.' },
+        designOptionId: { type: 'string', description: 'Target DesignOption ElementId.' }
+      },
+      required: ['elementId', 'designOptionId']
+    }
+  },
+
+  // --- get_selected_elements ---------------------------------------------
+  {
+    name:        'get_selected_elements',
+    description: 'Returns the currently selected elements in the Revit UI.',
+    inputSchema: { type: 'object', properties: {}, required: [] }
+  },
+
+  // --- find_elements_by_parameter ----------------------------------------
+  {
+    name:        'find_elements_by_parameter',
+    description: 'Finds elements by an instance or type parameter value, optionally filtered by category.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        parameterName: { type: 'string', description: 'Parameter display name.' },
+        value: { type: 'string', description: 'Optional value to match. Omit to find elements that have the parameter.' },
+        category: { type: 'string', description: 'Optional BuiltInCategory suffix, e.g. Walls, Doors, Rooms.' },
+        comparison: { type: 'string', description: 'equals, contains, startsWith, endsWith, or notEquals. Default: equals.', default: 'equals' },
+        includeParameters: { type: 'boolean', description: 'Include a small parameter sample in results. Default: false.', default: false },
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 200, hard max: 2000.', default: 200 }
+      },
+      required: ['parameterName']
+    }
+  },
+
+  // --- get_levels ----------------------------------------------------------
+  {
+    name:        'get_levels',
+    description: 'Returns all Revit levels in the active document with id, name, and elevation.',
+    inputSchema: {
+      type:       'object',
+      properties: {},
+      required:   []
+    }
+  },
+
+  // --- create_level --------------------------------------------------------
+  {
+    name:        'create_level',
+    description: 'Creates a Revit level at the requested elevation. Unit defaults to feet.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        name: {
+          type:        'string',
+          description: 'Optional level name. If omitted, Revit assigns a default name.'
+        },
+        elevation: {
+          type:        'number',
+          description: 'Level elevation. Interpreted using the unit field.'
+        },
+        unit: {
+          type:        'string',
+          description: 'Elevation unit: feet, meters, or millimeters. Default: feet.',
+          default:     'feet'
+        }
+      },
+      required: ['elevation']
+    }
+  },
+
+  // --- update_level --------------------------------------------------------
+  {
+    name:        'update_level',
+    description: 'Updates a Revit level name and/or elevation.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        levelId: {
+          type:        'string',
+          description: 'Revit ElementId of the level to update.'
+        },
+        name: {
+          type:        'string',
+          description: 'New level name.'
+        },
+        elevation: {
+          type:        'number',
+          description: 'New level elevation. Interpreted using the unit field.'
+        },
+        unit: {
+          type:        'string',
+          description: 'Elevation unit: feet, meters, or millimeters. Default: feet.',
+          default:     'feet'
+        }
+      },
+      required: ['levelId']
+    }
+  },
+
+  // --- get_grids -----------------------------------------------------------
+  {
+    name:        'get_grids',
+    description: 'Returns all Revit grids in the active document with id, name, and curve data.',
+    inputSchema: {
+      type:       'object',
+      properties: {},
+      required:   []
+    }
+  },
+
+  // --- create_grid ---------------------------------------------------------
+  {
+    name:        'create_grid',
+    description: 'Creates a straight Revit grid line. Coordinates default to feet.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        name: {
+          type:        'string',
+          description: 'Optional grid name. If omitted, Revit assigns a default name.'
+        },
+        startX: { type: 'number', description: 'Grid start X coordinate.' },
+        startY: { type: 'number', description: 'Grid start Y coordinate.' },
+        endX:   { type: 'number', description: 'Grid end X coordinate.' },
+        endY:   { type: 'number', description: 'Grid end Y coordinate.' },
+        z: {
+          type:        'number',
+          description: 'Optional Z coordinate for both endpoints. Default: 0.',
+          default:     0
+        },
+        unit: {
+          type:        'string',
+          description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.',
+          default:     'feet'
+        }
+      },
+      required: ['startX', 'startY', 'endX', 'endY']
+    }
+  },
+
+  // --- update_grid ---------------------------------------------------------
+  {
+    name:        'update_grid',
+    description: 'Updates a Revit grid. Currently supports renaming the grid.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        gridId: {
+          type:        'string',
+          description: 'Revit ElementId of the grid to update.'
+        },
+        name: {
+          type:        'string',
+          description: 'New grid name.'
+        }
+      },
+      required: ['gridId']
+    }
+  },
+
+  // --- get_element_parameters ----------------------------------------------
+  {
+    name:        'get_element_parameters',
+    description: 'Reads instance and optional type parameters for a Revit element.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: {
+          type:        'string',
+          description: 'Revit ElementId of the element to inspect.'
+        },
+        includeTypeParameters: {
+          type:        'boolean',
+          description: 'Include parameters from the element type. Default: true.',
+          default:     true
+        }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- set_element_parameter ------------------------------------------------
+  {
+    name:        'set_element_parameter',
+    description: 'Sets one writable instance or type parameter on a Revit element.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: {
+          type:        'string',
+          description: 'Revit ElementId of the element to update.'
+        },
+        parameterName: {
+          type:        'string',
+          description: 'Parameter display name.'
+        },
+        value: {
+          description: 'New parameter value. JSON type is converted based on the Revit storage type.'
+        },
+        target: {
+          type:        'string',
+          description: 'Parameter target: instance or type. Default: instance.',
+          default:     'instance'
+        }
+      },
+      required: ['elementId', 'parameterName', 'value']
+    }
+  },
+
+  // --- set_element_parameters ----------------------------------------------
+  {
+    name:        'set_element_parameters',
+    description: 'Sets multiple writable instance or type parameters on one Revit element.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: {
+          type:        'string',
+          description: 'Revit ElementId of the element to update.'
+        },
+        parameters: {
+          type:        'object',
+          description: 'Object whose keys are parameter display names and values are new parameter values.'
+        },
+        target: {
+          type:        'string',
+          description: 'Parameter target: instance or type. Default: instance.',
+          default:     'instance'
+        }
+      },
+      required: ['elementId', 'parameters']
+    }
+  },
+
+  // --- batch_set_parameters -------------------------------------------------
+  {
+    name:        'batch_set_parameters',
+    description: 'Sets the same parameter values on multiple Revit elements, with optional dry run.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementIds: {
+          type:        'array',
+          description: 'Revit ElementIds to update.',
+          items:       { type: 'string' }
+        },
+        parameters: {
+          type:        'object',
+          description: 'Object whose keys are parameter display names and values are new parameter values.'
+        },
+        target: {
+          type:        'string',
+          description: 'Parameter target: instance or type. Default: instance.',
+          default:     'instance'
+        },
+        dryRun: {
+          type:        'boolean',
+          description: 'Validate parameter availability without writing changes. Default: false.',
+          default:     false
+        },
+        maxItems: {
+          type:        'integer',
+          description: 'Safety cap for element count. Default: 100, hard max: 500.',
+          default:     100
+        }
+      },
+      required: ['elementIds', 'parameters']
+    }
+  },
+
+  // --- get_views -----------------------------------------------------------
+  {
+    name:        'get_views',
+    description: 'Returns Revit views with id, name, view type, template flag, scale, and level.',
+    inputSchema: { type: 'object', properties: {}, required: [] }
+  },
+
+  // --- create_view ---------------------------------------------------------
+  {
+    name:        'create_view',
+    description: 'Creates a Revit view. Supports floorPlan, ceilingPlan, structuralPlan, threeD, and drafting.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewType: { type: 'string', description: 'floorPlan, ceilingPlan, structuralPlan, threeD, or drafting.', default: 'floorPlan' },
+        name: { type: 'string', description: 'Optional view name.' },
+        levelId: { type: 'string', description: 'Required for plan views.' },
+        viewFamilyTypeId: { type: 'string', description: 'Optional ViewFamilyType id.' },
+        scale: { type: 'integer', description: 'Optional view scale.' }
+      },
+      required: []
+    }
+  },
+
+  // --- duplicate_view ------------------------------------------------------
+  {
+    name:        'duplicate_view',
+    description: 'Duplicates a Revit view using Duplicate, WithDetailing, or AsDependent.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'Source view ElementId.' },
+        name: { type: 'string', description: 'Optional new view name.' },
+        duplicateOption: { type: 'string', description: 'Duplicate, WithDetailing, or AsDependent.', default: 'Duplicate' }
+      },
+      required: ['viewId']
+    }
+  },
+
+  // --- update_view ---------------------------------------------------------
+  {
+    name:        'update_view',
+    description: 'Updates a Revit view name, scale, and/or view template.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'View ElementId.' },
+        name: { type: 'string', description: 'New view name.' },
+        scale: { type: 'integer', description: 'New view scale.' },
+        viewTemplateId: { type: 'string', description: "View template ElementId, 'none', or -1." }
+      },
+      required: ['viewId']
+    }
+  },
+
+  // --- get_sheets ----------------------------------------------------------
+  {
+    name:        'get_sheets',
+    description: 'Returns Revit sheets with id, sheet number, name, and placed views.',
+    inputSchema: { type: 'object', properties: {}, required: [] }
+  },
+
+  // --- create_sheet --------------------------------------------------------
+  {
+    name:        'create_sheet',
+    description: 'Creates a Revit sheet using a title block type id/name or the first available title block.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        sheetNumber: { type: 'string', description: 'Optional sheet number.' },
+        sheetName: { type: 'string', description: 'Optional sheet name.' },
+        titleBlockTypeId: { type: 'string', description: 'Optional title block FamilySymbol ElementId.' },
+        titleBlockTypeName: { type: 'string', description: "Optional title block type name or 'Family: Type'." }
+      },
+      required: []
+    }
+  },
+
+  // --- update_sheet --------------------------------------------------------
+  {
+    name:        'update_sheet',
+    description: 'Updates a Revit sheet number and/or name.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        sheetId: { type: 'string', description: 'Sheet ElementId.' },
+        sheetNumber: { type: 'string', description: 'New sheet number.' },
+        sheetName: { type: 'string', description: 'New sheet name.' }
+      },
+      required: ['sheetId']
+    }
+  },
+
+  // --- place_view_on_sheet -------------------------------------------------
+  {
+    name:        'place_view_on_sheet',
+    description: 'Places a Revit view on a sheet by creating a viewport at a sheet coordinate.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        sheetId: { type: 'string', description: 'Target sheet ElementId.' },
+        viewId: { type: 'string', description: 'View ElementId to place.' },
+        x: { type: 'number', description: 'Sheet X coordinate.' },
+        y: { type: 'number', description: 'Sheet Y coordinate.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        viewportTypeId: { type: 'string', description: 'Optional viewport type ElementId.' }
+      },
+      required: ['sheetId', 'viewId', 'x', 'y']
+    }
+  },
+
+  // --- place_title_view_on_sheet ------------------------------------------
+  {
+    name:        'place_title_view_on_sheet',
+    description: 'Places a drafting or legend view used as a title graphic on a sheet.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        sheetId: { type: 'string', description: 'Target sheet ElementId.' },
+        viewId: { type: 'string', description: 'Drafting View or Legend ElementId to place.' },
+        x: { type: 'number', description: 'Sheet X coordinate.' },
+        y: { type: 'number', description: 'Sheet Y coordinate.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        viewportTypeId: { type: 'string', description: 'Optional viewport type ElementId.' }
+      },
+      required: ['sheetId', 'viewId', 'x', 'y']
+    }
+  },
+
+  // --- remove_view_from_sheet ---------------------------------------------
+  {
+    name:        'remove_view_from_sheet',
+    description: 'Removes a placed view from a sheet by viewportId or by sheetId + viewId.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewportId: { type: 'string', description: 'Viewport ElementId to delete.' },
+        sheetId: { type: 'string', description: 'Sheet ElementId, used with viewId if viewportId is omitted.' },
+        viewId: { type: 'string', description: 'View ElementId, used with sheetId if viewportId is omitted.' }
+      },
+      required: []
+    }
+  },
+
+  // --- get_view_sheet_sets -------------------------------------------------
+  {
+    name:        'get_view_sheet_sets',
+    description: 'Lists named Revit ViewSheetSets used by PrintManager.',
+    inputSchema: { type: 'object', properties: {}, required: [] }
+  },
+
+  // --- create_view_sheet_set ----------------------------------------------
+  {
+    name:        'create_view_sheet_set',
+    description: 'Creates a named ViewSheetSet from viewIds and/or sheetIds.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        name: { type: 'string', description: 'ViewSheetSet name.' },
+        viewIds: { type: 'array', items: { type: 'string' }, description: 'View ids to include.' },
+        sheetIds: { type: 'array', items: { type: 'string' }, description: 'Sheet ids to include.' },
+        replaceExisting: { type: 'boolean', description: 'Replace an existing set with the same name.', default: false }
+      },
+      required: ['name']
+    }
+  },
+
+  // --- add_views_to_view_sheet_set ----------------------------------------
+  {
+    name:        'add_views_to_view_sheet_set',
+    description: 'Adds viewIds to an existing ViewSheetSet.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        name: { type: 'string', description: 'Existing ViewSheetSet name.' },
+        viewIds: { type: 'array', items: { type: 'string' }, description: 'View ids to add.' }
+      },
+      required: ['name', 'viewIds']
+    }
+  },
+
+  // --- add_sheets_to_view_sheet_set ---------------------------------------
+  {
+    name:        'add_sheets_to_view_sheet_set',
+    description: 'Adds sheetIds to an existing ViewSheetSet.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        name: { type: 'string', description: 'Existing ViewSheetSet name.' },
+        sheetIds: { type: 'array', items: { type: 'string' }, description: 'Sheet ids to add.' }
+      },
+      required: ['name', 'sheetIds']
+    }
+  },
+
+  // --- remove_from_view_sheet_set -----------------------------------------
+  {
+    name:        'remove_from_view_sheet_set',
+    description: 'Removes viewIds and/or sheetIds from an existing ViewSheetSet.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        name: { type: 'string', description: 'Existing ViewSheetSet name.' },
+        viewIds: { type: 'array', items: { type: 'string' }, description: 'View ids to remove.' },
+        sheetIds: { type: 'array', items: { type: 'string' }, description: 'Sheet ids to remove.' }
+      },
+      required: ['name']
+    }
+  },
+
+  // --- delete_view_sheet_set ----------------------------------------------
+  {
+    name:        'delete_view_sheet_set',
+    description: 'Deletes a named ViewSheetSet.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        name: { type: 'string', description: 'ViewSheetSet name to delete.' }
+      },
+      required: ['name']
+    }
+  },
+
+  // --- get_element --------------------------------------------------------
+  {
+    name:        'get_element',
+    description: 'Returns detailed metadata for one Revit element by ElementId.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Revit ElementId to inspect.' },
+        includeParameters: { type: 'boolean', description: 'Include instance parameters. Default: false.', default: false },
+        includeTypeParameters: { type: 'boolean', description: 'Include type parameters when includeParameters is true. Default: true.', default: true }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- get_element_location ----------------------------------------------
+  {
+    name:        'get_element_location',
+    description: 'Returns the LocationPoint or LocationCurve data for one Revit element.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Revit ElementId to inspect.' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- get_element_geometry_summary --------------------------------------
+  {
+    name:        'get_element_geometry_summary',
+    description: 'Returns a lightweight geometry summary for one Revit element.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Revit ElementId to inspect.' },
+        detailLevel: { type: 'string', description: 'Coarse, Medium, Fine, or Undefined. Default: Medium.', default: 'Medium' },
+        includeNonVisibleObjects: { type: 'boolean', description: 'Include non-visible geometry objects. Default: false.', default: false }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- update_element -----------------------------------------------------
+  {
+    name:        'update_element',
+    description: 'Updates general element fields: name, typeId, pinned state, and instance/type parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Revit ElementId to update.' },
+        name: { type: 'string', description: 'Optional new element name where writable.' },
+        typeId: { type: 'string', description: 'Optional target ElementType id.' },
+        pinned: { type: 'boolean', description: 'Optional pinned state.' },
+        parameters: { type: 'object', description: 'Optional object of parameter display names to new values.' },
+        parameterTarget: { type: 'string', description: 'Parameter target: instance or type. Default: instance.', default: 'instance' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- change_element_type -----------------------------------------------
+  {
+    name:        'change_element_type',
+    description: 'Changes one element to another compatible Revit ElementType.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Revit ElementId to update.' },
+        typeId: { type: 'string', description: 'Target ElementType id.' }
+      },
+      required: ['elementId', 'typeId']
+    }
+  },
+
+  // --- create_family_instance --------------------------------------------
+  {
+    name:        'create_family_instance',
+    description: 'Creates a Revit FamilyInstance from a FamilySymbol at a point, with optional level, host, structural type, and parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        symbolId: { type: 'string', description: 'FamilySymbol ElementId to place.' },
+        x: { type: 'number', description: 'Location X.' },
+        y: { type: 'number', description: 'Location Y.' },
+        z: { type: 'number', description: 'Location Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        levelId: { type: 'string', description: 'Optional Level ElementId for level-based families.' },
+        hostId: { type: 'string', description: 'Optional host ElementId for hosted families.' },
+        structuralType: { type: 'string', description: 'NonStructural, Beam, Brace, Column, or Footing. Default: NonStructural.', default: 'NonStructural' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set after creation.' }
+      },
+      required: ['symbolId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- place_door ---------------------------------------------------------
+  {
+    name:        'place_door',
+    description: 'Places a door FamilySymbol. Provide a hostId for hosted door families.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        symbolId: { type: 'string', description: 'Door FamilySymbol ElementId to place.' },
+        x: { type: 'number', description: 'Location X.' },
+        y: { type: 'number', description: 'Location Y.' },
+        z: { type: 'number', description: 'Location Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        levelId: { type: 'string', description: 'Optional Level ElementId.' },
+        hostId: { type: 'string', description: 'Optional wall host ElementId.' },
+        structuralType: { type: 'string', description: 'Default: NonStructural.', default: 'NonStructural' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set after creation.' }
+      },
+      required: ['symbolId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- place_window -------------------------------------------------------
+  {
+    name:        'place_window',
+    description: 'Places a window FamilySymbol. Provide a hostId for hosted window families.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        symbolId: { type: 'string', description: 'Window FamilySymbol ElementId to place.' },
+        x: { type: 'number', description: 'Location X.' },
+        y: { type: 'number', description: 'Location Y.' },
+        z: { type: 'number', description: 'Location Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        levelId: { type: 'string', description: 'Optional Level ElementId.' },
+        hostId: { type: 'string', description: 'Optional wall host ElementId.' },
+        structuralType: { type: 'string', description: 'Default: NonStructural.', default: 'NonStructural' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set after creation.' }
+      },
+      required: ['symbolId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- place_column -------------------------------------------------------
+  {
+    name:        'place_column',
+    description: 'Places a column FamilySymbol. Defaults structuralType to Column.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        symbolId: { type: 'string', description: 'Column FamilySymbol ElementId to place.' },
+        x: { type: 'number', description: 'Location X.' },
+        y: { type: 'number', description: 'Location Y.' },
+        z: { type: 'number', description: 'Location Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        levelId: { type: 'string', description: 'Optional Level ElementId.' },
+        hostId: { type: 'string', description: 'Optional host ElementId.' },
+        structuralType: { type: 'string', description: 'Default: Column.', default: 'Column' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set after creation.' }
+      },
+      required: ['symbolId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- place_structural_framing ------------------------------------------
+  {
+    name:        'place_structural_framing',
+    description: 'Places a structural framing FamilySymbol. Defaults structuralType to Beam.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        symbolId: { type: 'string', description: 'Structural framing FamilySymbol ElementId to place.' },
+        x: { type: 'number', description: 'Location X.' },
+        y: { type: 'number', description: 'Location Y.' },
+        z: { type: 'number', description: 'Location Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        levelId: { type: 'string', description: 'Optional Level ElementId.' },
+        hostId: { type: 'string', description: 'Optional host ElementId.' },
+        structuralType: { type: 'string', description: 'Default: Beam.', default: 'Beam' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set after creation.' }
+      },
+      required: ['symbolId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- place_furniture ----------------------------------------------------
+  {
+    name:        'place_furniture',
+    description: 'Places a furniture FamilySymbol.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        symbolId: { type: 'string', description: 'Furniture FamilySymbol ElementId to place.' },
+        x: { type: 'number', description: 'Location X.' },
+        y: { type: 'number', description: 'Location Y.' },
+        z: { type: 'number', description: 'Location Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        levelId: { type: 'string', description: 'Optional Level ElementId.' },
+        hostId: { type: 'string', description: 'Optional host ElementId.' },
+        structuralType: { type: 'string', description: 'Default: NonStructural.', default: 'NonStructural' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set after creation.' }
+      },
+      required: ['symbolId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- place_equipment ----------------------------------------------------
+  {
+    name:        'place_equipment',
+    description: 'Places an equipment FamilySymbol. Use list_family_types to locate the correct symbolId.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        symbolId: { type: 'string', description: 'Equipment FamilySymbol ElementId to place.' },
+        x: { type: 'number', description: 'Location X.' },
+        y: { type: 'number', description: 'Location Y.' },
+        z: { type: 'number', description: 'Location Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        levelId: { type: 'string', description: 'Optional Level ElementId.' },
+        hostId: { type: 'string', description: 'Optional host ElementId.' },
+        structuralType: { type: 'string', description: 'Default: NonStructural.', default: 'NonStructural' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set after creation.' }
+      },
+      required: ['symbolId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- place_mep_fixture --------------------------------------------------
+  {
+    name:        'place_mep_fixture',
+    description: 'Places an MEP fixture FamilySymbol.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        symbolId: { type: 'string', description: 'FamilySymbol ElementId to place.' },
+        x: { type: 'number', description: 'Location X.' },
+        y: { type: 'number', description: 'Location Y.' },
+        z: { type: 'number', description: 'Location Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        levelId: { type: 'string', description: 'Optional Level ElementId.' },
+        hostId: { type: 'string', description: 'Optional host ElementId.' },
+        structuralType: { type: 'string', description: 'Default: NonStructural.', default: 'NonStructural' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set after creation.' }
+      },
+      required: ['symbolId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- place_mechanical_equipment ----------------------------------------
+  {
+    name:        'place_mechanical_equipment',
+    description: 'Places a mechanical equipment FamilySymbol.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        symbolId: { type: 'string', description: 'Mechanical equipment FamilySymbol ElementId to place.' },
+        x: { type: 'number', description: 'Location X.' },
+        y: { type: 'number', description: 'Location Y.' },
+        z: { type: 'number', description: 'Location Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        levelId: { type: 'string', description: 'Optional Level ElementId.' },
+        hostId: { type: 'string', description: 'Optional host ElementId.' },
+        structuralType: { type: 'string', description: 'Default: NonStructural.', default: 'NonStructural' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set after creation.' }
+      },
+      required: ['symbolId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- place_electrical_equipment ----------------------------------------
+  {
+    name:        'place_electrical_equipment',
+    description: 'Places an electrical equipment FamilySymbol.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        symbolId: { type: 'string', description: 'Electrical equipment FamilySymbol ElementId to place.' },
+        x: { type: 'number', description: 'Location X.' },
+        y: { type: 'number', description: 'Location Y.' },
+        z: { type: 'number', description: 'Location Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        levelId: { type: 'string', description: 'Optional Level ElementId.' },
+        hostId: { type: 'string', description: 'Optional host ElementId.' },
+        structuralType: { type: 'string', description: 'Default: NonStructural.', default: 'NonStructural' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set after creation.' }
+      },
+      required: ['symbolId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- get_connectors -----------------------------------------------------
+  {
+    name:        'get_connectors',
+    description: 'Lists MEP connectors for a MEPCurve or MEP FamilyInstance.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'ElementId to inspect.' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- create_pipe --------------------------------------------------------
+  {
+    name:        'create_pipe',
+    description: 'Creates a pipe between two points.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        typeId: { type: 'string', description: 'Optional PipeType id.' },
+        systemTypeId: { type: 'string', description: 'Optional PipingSystemType id.' },
+        levelId: { type: 'string', description: 'Level ElementId.' },
+        startX: { type: 'number' }, startY: { type: 'number' }, startZ: { type: 'number' },
+        endX: { type: 'number' }, endY: { type: 'number' }, endZ: { type: 'number' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['levelId', 'startX', 'startY', 'startZ', 'endX', 'endY', 'endZ']
+    }
+  },
+
+  // --- update_pipe --------------------------------------------------------
+  {
+    name:        'update_pipe',
+    description: 'Updates a pipe type, endpoints, and/or parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Pipe ElementId.' },
+        typeId: { type: 'string', description: 'Optional PipeType id.' },
+        startX: { type: 'number' }, startY: { type: 'number' }, startZ: { type: 'number' },
+        endX: { type: 'number' }, endY: { type: 'number' }, endZ: { type: 'number' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- create_duct --------------------------------------------------------
+  {
+    name:        'create_duct',
+    description: 'Creates a duct between two points.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        typeId: { type: 'string', description: 'Optional DuctType id.' },
+        systemTypeId: { type: 'string', description: 'Optional MechanicalSystemType id.' },
+        levelId: { type: 'string', description: 'Level ElementId.' },
+        startX: { type: 'number' }, startY: { type: 'number' }, startZ: { type: 'number' },
+        endX: { type: 'number' }, endY: { type: 'number' }, endZ: { type: 'number' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['levelId', 'startX', 'startY', 'startZ', 'endX', 'endY', 'endZ']
+    }
+  },
+
+  // --- update_duct --------------------------------------------------------
+  {
+    name:        'update_duct',
+    description: 'Updates a duct type, endpoints, and/or parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Duct ElementId.' },
+        typeId: { type: 'string', description: 'Optional DuctType id.' },
+        startX: { type: 'number' }, startY: { type: 'number' }, startZ: { type: 'number' },
+        endX: { type: 'number' }, endY: { type: 'number' }, endZ: { type: 'number' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- create_conduit -----------------------------------------------------
+  {
+    name:        'create_conduit',
+    description: 'Creates a conduit between two points.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        typeId: { type: 'string', description: 'Optional ConduitType id.' },
+        levelId: { type: 'string', description: 'Level ElementId.' },
+        startX: { type: 'number' }, startY: { type: 'number' }, startZ: { type: 'number' },
+        endX: { type: 'number' }, endY: { type: 'number' }, endZ: { type: 'number' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['levelId', 'startX', 'startY', 'startZ', 'endX', 'endY', 'endZ']
+    }
+  },
+
+  // --- update_conduit -----------------------------------------------------
+  {
+    name:        'update_conduit',
+    description: 'Updates a conduit type, endpoints, and/or parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Conduit ElementId.' },
+        typeId: { type: 'string', description: 'Optional ConduitType id.' },
+        startX: { type: 'number' }, startY: { type: 'number' }, startZ: { type: 'number' },
+        endX: { type: 'number' }, endY: { type: 'number' }, endZ: { type: 'number' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- create_cable_tray --------------------------------------------------
+  {
+    name:        'create_cable_tray',
+    description: 'Creates a cable tray between two points.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        typeId: { type: 'string', description: 'Optional CableTrayType id.' },
+        levelId: { type: 'string', description: 'Level ElementId.' },
+        startX: { type: 'number' }, startY: { type: 'number' }, startZ: { type: 'number' },
+        endX: { type: 'number' }, endY: { type: 'number' }, endZ: { type: 'number' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['levelId', 'startX', 'startY', 'startZ', 'endX', 'endY', 'endZ']
+    }
+  },
+
+  // --- update_cable_tray --------------------------------------------------
+  {
+    name:        'update_cable_tray',
+    description: 'Updates a cable tray type, endpoints, and/or parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'CableTray ElementId.' },
+        typeId: { type: 'string', description: 'Optional CableTrayType id.' },
+        startX: { type: 'number' }, startY: { type: 'number' }, startZ: { type: 'number' },
+        endX: { type: 'number' }, endY: { type: 'number' }, endZ: { type: 'number' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- connect_mep_elements ----------------------------------------------
+  {
+    name:        'connect_mep_elements',
+    description: 'Connects two MEP connectors by index or nearest XYZ.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        first: { type: 'object', properties: { elementId: { type: 'string' }, connectorIndex: { type: 'integer' }, x: { type: 'number' }, y: { type: 'number' }, z: { type: 'number' } }, required: ['elementId'] },
+        second: { type: 'object', properties: { elementId: { type: 'string' }, connectorIndex: { type: 'integer' }, x: { type: 'number' }, y: { type: 'number' }, z: { type: 'number' } }, required: ['elementId'] },
+        unit: { type: 'string', description: 'Coordinate unit for XYZ connector references. Default: feet.', default: 'feet' }
+      },
+      required: ['first', 'second']
+    }
+  },
+
+  // --- disconnect_mep_elements -------------------------------------------
+  {
+    name:        'disconnect_mep_elements',
+    description: 'Disconnects two MEP connectors by index or nearest XYZ.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        first: { type: 'object', properties: { elementId: { type: 'string' }, connectorIndex: { type: 'integer' }, x: { type: 'number' }, y: { type: 'number' }, z: { type: 'number' } }, required: ['elementId'] },
+        second: { type: 'object', properties: { elementId: { type: 'string' }, connectorIndex: { type: 'integer' }, x: { type: 'number' }, y: { type: 'number' }, z: { type: 'number' } }, required: ['elementId'] },
+        unit: { type: 'string', description: 'Coordinate unit for XYZ connector references. Default: feet.', default: 'feet' }
+      },
+      required: ['first', 'second']
+    }
+  },
+
+  // --- delete_elements ----------------------------------------------------
+  {
+    name:        'delete_elements',
+    description: 'Deletes Revit elements by ElementId, with dryRun and maxItems safety controls.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementIds: { type: 'array', description: 'Revit ElementIds to delete.', items: { type: 'string' } },
+        dryRun: { type: 'boolean', description: 'Validate inputs without modifying the model. Default: false.', default: false },
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 100, hard max: 500.', default: 100 }
+      },
+      required: ['elementIds']
+    }
+  },
+
+  // --- move_elements ------------------------------------------------------
+  {
+    name:        'move_elements',
+    description: 'Moves Revit elements by a translation vector.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementIds: { type: 'array', description: 'Revit ElementIds to move.', items: { type: 'string' } },
+        x: { type: 'number', description: 'Translation X.' },
+        y: { type: 'number', description: 'Translation Y.' },
+        z: { type: 'number', description: 'Translation Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        dryRun: { type: 'boolean', description: 'Validate inputs without modifying the model. Default: false.', default: false },
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 100, hard max: 500.', default: 100 }
+      },
+      required: ['elementIds', 'x', 'y', 'z']
+    }
+  },
+
+  // --- copy_elements ------------------------------------------------------
+  {
+    name:        'copy_elements',
+    description: 'Copies Revit elements by a translation vector and returns the copied ElementIds.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementIds: { type: 'array', description: 'Revit ElementIds to copy.', items: { type: 'string' } },
+        x: { type: 'number', description: 'Translation X.' },
+        y: { type: 'number', description: 'Translation Y.' },
+        z: { type: 'number', description: 'Translation Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        dryRun: { type: 'boolean', description: 'Validate inputs without modifying the model. Default: false.', default: false },
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 100, hard max: 500.', default: 100 }
+      },
+      required: ['elementIds', 'x', 'y', 'z']
+    }
+  },
+
+  // --- rotate_elements ----------------------------------------------------
+  {
+    name:        'rotate_elements',
+    description: 'Rotates Revit elements around an axis defined by origin and vector.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementIds: { type: 'array', description: 'Revit ElementIds to rotate.', items: { type: 'string' } },
+        originX: { type: 'number', description: 'Axis origin X.' },
+        originY: { type: 'number', description: 'Axis origin Y.' },
+        originZ: { type: 'number', description: 'Axis origin Z.' },
+        axisX: { type: 'number', description: 'Axis vector X.' },
+        axisY: { type: 'number', description: 'Axis vector Y.' },
+        axisZ: { type: 'number', description: 'Axis vector Z.', default: 1 },
+        angleDegrees: { type: 'number', description: 'Rotation angle in degrees.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        dryRun: { type: 'boolean', description: 'Validate inputs without modifying the model. Default: false.', default: false },
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 100, hard max: 500.', default: 100 }
+      },
+      required: ['elementIds', 'originX', 'originY', 'originZ', 'axisX', 'axisY', 'axisZ', 'angleDegrees']
+    }
+  },
+
+  // --- mirror_elements ----------------------------------------------------
+  {
+    name:        'mirror_elements',
+    description: 'Mirrors Revit elements across a plane defined by origin and normal.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementIds: { type: 'array', description: 'Revit ElementIds to mirror.', items: { type: 'string' } },
+        originX: { type: 'number', description: 'Mirror plane origin X.' },
+        originY: { type: 'number', description: 'Mirror plane origin Y.' },
+        originZ: { type: 'number', description: 'Mirror plane origin Z.' },
+        normalX: { type: 'number', description: 'Mirror plane normal X.', default: 1 },
+        normalY: { type: 'number', description: 'Mirror plane normal Y.' },
+        normalZ: { type: 'number', description: 'Mirror plane normal Z.' },
+        copy: { type: 'boolean', description: 'Create mirrored copies instead of mirroring originals. Default: true.', default: true },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        dryRun: { type: 'boolean', description: 'Validate inputs without modifying the model. Default: false.', default: false },
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 100, hard max: 500.', default: 100 }
+      },
+      required: ['elementIds', 'originX', 'originY', 'originZ', 'normalX', 'normalY', 'normalZ']
+    }
+  },
+
+  // --- pin_elements -------------------------------------------------------
+  {
+    name:        'pin_elements',
+    description: 'Pins Revit elements by ElementId.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementIds: { type: 'array', description: 'Revit ElementIds to pin.', items: { type: 'string' } },
+        dryRun: { type: 'boolean', description: 'Validate inputs without modifying the model. Default: false.', default: false },
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 100, hard max: 500.', default: 100 }
+      },
+      required: ['elementIds']
+    }
+  },
+
+  // --- unpin_elements -----------------------------------------------------
+  {
+    name:        'unpin_elements',
+    description: 'Unpins Revit elements by ElementId.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementIds: { type: 'array', description: 'Revit ElementIds to unpin.', items: { type: 'string' } },
+        dryRun: { type: 'boolean', description: 'Validate inputs without modifying the model. Default: false.', default: false },
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 100, hard max: 500.', default: 100 }
+      },
+      required: ['elementIds']
+    }
+  },
+
+  // --- hide_elements_in_view ---------------------------------------------
+  {
+    name:        'hide_elements_in_view',
+    description: 'Permanently hides elements in a target view, or the active view when viewId is omitted.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'Optional target View ElementId. Uses active view when omitted.' },
+        elementIds: { type: 'array', description: 'Revit ElementIds to hide in the view.', items: { type: 'string' } },
+        dryRun: { type: 'boolean', description: 'Validate inputs without modifying the model. Default: false.', default: false },
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 100, hard max: 500.', default: 100 }
+      },
+      required: ['elementIds']
+    }
+  },
+
+  // --- unhide_elements_in_view -------------------------------------------
+  {
+    name:        'unhide_elements_in_view',
+    description: 'Unhides elements in a target view, or the active view when viewId is omitted.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'Optional target View ElementId. Uses active view when omitted.' },
+        elementIds: { type: 'array', description: 'Revit ElementIds to unhide in the view.', items: { type: 'string' } },
+        dryRun: { type: 'boolean', description: 'Validate inputs without modifying the model. Default: false.', default: false },
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 100, hard max: 500.', default: 100 }
+      },
+      required: ['elementIds']
+    }
+  },
+
+  // --- validate_batch_operations -----------------------------------------
+  {
+    name:        'validate_batch_operations',
+    description: 'Validates a list of supported element operations without modifying the Revit model.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        operations: {
+          type:        'array',
+          description: 'Batch items. Each item accepts operation plus either an arguments object or flattened arguments.',
+          items: {
+            type:       'object',
+            properties: {
+              operation: {
+                type:        'string',
+                description: 'Supported: create_family_instance, update_element, change_element_type, delete_elements, move_elements, copy_elements, rotate_elements, mirror_elements, pin_elements, unpin_elements, hide_elements_in_view, unhide_elements_in_view.'
+              },
+              arguments: {
+                type:        'object',
+                description: 'Arguments matching the selected operation. Flattened arguments are also accepted.'
+              }
+            },
+            required: ['operation']
+          }
+        },
+        dryRun: { type: 'boolean', description: 'Ignored by validate_batch_operations; kept for schema compatibility.', default: true },
+        continueOnError: { type: 'boolean', description: 'Continue validating after a failed operation. Default: false.', default: false },
+        maxOperations: { type: 'integer', description: 'Safety cap. Default: 25, hard max: 100.', default: 25 }
+      },
+      required: ['operations']
+    }
+  },
+
+  // --- apply_batch_operations --------------------------------------------
+  {
+    name:        'apply_batch_operations',
+    description: 'Applies a list of supported element operations. Use dryRun=true to validate without changing the model.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        operations: {
+          type:        'array',
+          description: 'Batch items. Each item accepts operation plus either an arguments object or flattened arguments.',
+          items: {
+            type:       'object',
+            properties: {
+              operation: {
+                type:        'string',
+                description: 'Supported: create_family_instance, update_element, change_element_type, delete_elements, move_elements, copy_elements, rotate_elements, mirror_elements, pin_elements, unpin_elements, hide_elements_in_view, unhide_elements_in_view.'
+              },
+              arguments: {
+                type:        'object',
+                description: 'Arguments matching the selected operation. Flattened arguments are also accepted.'
+              }
+            },
+            required: ['operation']
+          }
+        },
+        dryRun: { type: 'boolean', description: 'Validate without modifying the model. Default: false.', default: false },
+        continueOnError: { type: 'boolean', description: 'Continue after a failed operation. Default: false.', default: false },
+        maxOperations: { type: 'integer', description: 'Safety cap. Default: 25, hard max: 100.', default: 25 }
+      },
+      required: ['operations']
+    }
+  },
+
+  // --- create_material ----------------------------------------------------
+  {
+    name:        'create_material',
+    description: 'Creates a Revit material with optional RGB color and transparency.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        name: { type: 'string', description: 'New material name.' },
+        color: {
+          type:       'object',
+          properties: {
+            r: { type: 'integer', description: 'Red 0-255.' },
+            g: { type: 'integer', description: 'Green 0-255.' },
+            b: { type: 'integer', description: 'Blue 0-255.' }
+          },
+          required: ['r', 'g', 'b']
+        },
+        transparency: { type: 'integer', description: 'Transparency 0-100.' }
+      },
+      required: ['name']
+    }
+  },
+
+  // --- update_material ----------------------------------------------------
+  {
+    name:        'update_material',
+    description: 'Updates a Revit material by materialId or name.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        materialId: { type: 'string', description: 'Existing Material ElementId.' },
+        name: { type: 'string', description: 'Existing material name if materialId is omitted.' },
+        newName: { type: 'string', description: 'Optional new material name.' },
+        color: {
+          type:       'object',
+          properties: {
+            r: { type: 'integer', description: 'Red 0-255.' },
+            g: { type: 'integer', description: 'Green 0-255.' },
+            b: { type: 'integer', description: 'Blue 0-255.' }
+          },
+          required: ['r', 'g', 'b']
+        },
+        transparency: { type: 'integer', description: 'Transparency 0-100.' }
+      },
+      required: []
+    }
+  },
+
+  // --- duplicate_element_type --------------------------------------------
+  {
+    name:        'duplicate_element_type',
+    description: 'Duplicates an ElementType and returns the new type id.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        typeId: { type: 'string', description: 'Source ElementType id.' },
+        name: { type: 'string', description: 'New type name.' }
+      },
+      required: ['typeId', 'name']
+    }
+  },
+
+  // --- rename_element_type -----------------------------------------------
+  {
+    name:        'rename_element_type',
+    description: 'Renames an ElementType.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        typeId: { type: 'string', description: 'ElementType id to rename.' },
+        name: { type: 'string', description: 'New type name.' }
+      },
+      required: ['typeId', 'name']
+    }
+  },
+
+  // --- set_type_parameter -------------------------------------------------
+  {
+    name:        'set_type_parameter',
+    description: 'Sets one writable parameter on an ElementType.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        typeId: { type: 'string', description: 'ElementType id.' },
+        parameterName: { type: 'string', description: 'Parameter display name.' },
+        value: { description: 'New parameter value.' }
+      },
+      required: ['typeId', 'parameterName', 'value']
+    }
+  },
+
+  // --- set_type_parameters ------------------------------------------------
+  {
+    name:        'set_type_parameters',
+    description: 'Sets multiple writable parameters on an ElementType.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        typeId: { type: 'string', description: 'ElementType id.' },
+        parameters: { type: 'object', description: 'Object whose keys are parameter names and values are new values.' }
+      },
+      required: ['typeId', 'parameters']
+    }
+  },
+
+  // --- apply_view_template ------------------------------------------------
+  {
+    name:        'apply_view_template',
+    description: 'Applies a view template to a Revit view.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'Target view id.' },
+        viewTemplateId: { type: 'string', description: 'View template id.' }
+      },
+      required: ['viewId', 'viewTemplateId']
+    }
+  },
+
+  // --- create_view_template ----------------------------------------------
+  {
+    name:        'create_view_template',
+    description: 'Creates a view template from an existing Revit view.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        sourceViewId: { type: 'string', description: 'Source view id.' },
+        name: { type: 'string', description: 'Optional template name.' }
+      },
+      required: ['sourceViewId']
+    }
+  },
+
+  // --- create_text_note ---------------------------------------------------
+  {
+    name:        'create_text_note',
+    description: 'Creates a Revit TextNote in a view.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'Target view id.' },
+        text: { type: 'string', description: 'Text content.' },
+        x: { type: 'number', description: 'X coordinate.' },
+        y: { type: 'number', description: 'Y coordinate.' },
+        z: { type: 'number', description: 'Z coordinate.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        textNoteTypeId: { type: 'string', description: 'Optional TextNoteType id.' }
+      },
+      required: ['viewId', 'text', 'x', 'y', 'z']
+    }
+  },
+
+  // --- update_text_note ---------------------------------------------------
+  {
+    name:        'update_text_note',
+    description: 'Updates text, position, and/or type of a Revit TextNote.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        textNoteId: { type: 'string', description: 'TextNote id for update.' },
+        text: { type: 'string', description: 'Text content.' },
+        x: { type: 'number', description: 'Optional X coordinate.' },
+        y: { type: 'number', description: 'Optional Y coordinate.' },
+        z: { type: 'number', description: 'Optional Z coordinate.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        textNoteTypeId: { type: 'string', description: 'Optional TextNoteType id.' }
+      },
+      required: ['textNoteId']
+    }
+  },
+
+  // --- create_detail_line -------------------------------------------------
+  {
+    name:        'create_detail_line',
+    description: 'Creates a detail line in a Revit view.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'Target view id.' },
+        startX: { type: 'number', description: 'Start X.' },
+        startY: { type: 'number', description: 'Start Y.' },
+        startZ: { type: 'number', description: 'Start Z.' },
+        endX: { type: 'number', description: 'End X.' },
+        endY: { type: 'number', description: 'End Y.' },
+        endZ: { type: 'number', description: 'End Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' }
+      },
+      required: ['viewId', 'startX', 'startY', 'startZ', 'endX', 'endY', 'endZ']
+    }
+  },
+
+  // --- create_model_line --------------------------------------------------
+  {
+    name:        'create_model_line',
+    description: 'Creates a model line on a horizontal sketch plane.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        startX: { type: 'number', description: 'Start X.' },
+        startY: { type: 'number', description: 'Start Y.' },
+        startZ: { type: 'number', description: 'Start Z.' },
+        endX: { type: 'number', description: 'End X.' },
+        endY: { type: 'number', description: 'End Y.' },
+        endZ: { type: 'number', description: 'End Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' }
+      },
+      required: ['startX', 'startY', 'startZ', 'endX', 'endY', 'endZ']
+    }
+  },
+
+  // --- update_wall --------------------------------------------------------
+  {
+    name:        'update_wall',
+    description: 'Updates a wall type and/or instance parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Wall ElementId.' },
+        typeId: { type: 'string', description: 'Optional target WallType id.' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- create_floor -------------------------------------------------------
+  {
+    name:        'create_floor',
+    description: 'Creates a floor from a closed polygon boundary.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        levelId: { type: 'string', description: 'Target Level ElementId.' },
+        typeId: { type: 'string', description: 'Optional FloorType id.' },
+        points: {
+          type:        'array',
+          description: 'Closed boundary points; do not repeat the first point at the end.',
+          items: {
+            type:       'object',
+            properties: {
+              x: { type: 'number' },
+              y: { type: 'number' },
+              z: { type: 'number' }
+            },
+            required: ['x', 'y', 'z']
+          }
+        },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set after creation.' }
+      },
+      required: ['levelId', 'points']
+    }
+  },
+
+  // --- update_floor -------------------------------------------------------
+  {
+    name:        'update_floor',
+    description: 'Updates a floor type and/or instance parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Floor ElementId.' },
+        typeId: { type: 'string', description: 'Optional target FloorType id.' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- create_ceiling -----------------------------------------------------
+  {
+    name:        'create_ceiling',
+    description: 'Creates a ceiling from a closed polygon boundary.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        levelId: { type: 'string', description: 'Target Level ElementId.' },
+        typeId: { type: 'string', description: 'Optional CeilingType id.' },
+        points: {
+          type:        'array',
+          description: 'Closed boundary points; do not repeat the first point at the end.',
+          items: {
+            type:       'object',
+            properties: {
+              x: { type: 'number' },
+              y: { type: 'number' },
+              z: { type: 'number' }
+            },
+            required: ['x', 'y', 'z']
+          }
+        },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set after creation.' }
+      },
+      required: ['levelId', 'points']
+    }
+  },
+
+  // --- update_ceiling -----------------------------------------------------
+  {
+    name:        'update_ceiling',
+    description: 'Updates a ceiling type and/or instance parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Ceiling ElementId.' },
+        typeId: { type: 'string', description: 'Optional target CeilingType id.' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- create_room --------------------------------------------------------
+  {
+    name:        'create_room',
+    description: 'Creates a room at a level and XY point.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        levelId: { type: 'string', description: 'Target Level ElementId.' },
+        x: { type: 'number', description: 'Room placement X.' },
+        y: { type: 'number', description: 'Room placement Y.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        name: { type: 'string', description: 'Optional room name.' },
+        number: { type: 'string', description: 'Optional room number.' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['levelId', 'x', 'y']
+    }
+  },
+
+  // --- update_room --------------------------------------------------------
+  {
+    name:        'update_room',
+    description: 'Updates room name, number, and/or parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        roomId: { type: 'string', description: 'Room ElementId.' },
+        name: { type: 'string', description: 'Optional room name.' },
+        number: { type: 'string', description: 'Optional room number.' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['roomId']
+    }
+  },
+
+  // --- create_roof --------------------------------------------------------
+  {
+    name:        'create_roof',
+    description: 'Creates a footprint roof from a closed polygon boundary.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        levelId: { type: 'string', description: 'Target Level ElementId.' },
+        roofTypeId: { type: 'string', description: 'Optional RoofType id.' },
+        points: {
+          type:        'array',
+          description: 'Closed boundary points; do not repeat the first point at the end.',
+          items: {
+            type:       'object',
+            properties: {
+              x: { type: 'number' },
+              y: { type: 'number' },
+              z: { type: 'number' }
+            },
+            required: ['x', 'y', 'z']
+          }
+        },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set after creation.' }
+      },
+      required: ['levelId', 'points']
+    }
+  },
+
+  // --- update_roof --------------------------------------------------------
+  {
+    name:        'update_roof',
+    description: 'Updates a roof type and/or instance parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Roof ElementId.' },
+        typeId: { type: 'string', description: 'Optional target RoofType id.' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- create_opening -----------------------------------------------------
+  {
+    name:        'create_opening',
+    description: 'Creates an opening on a host element from a bounding box/profile.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        hostId: { type: 'string', description: 'Host ElementId.' },
+        minX: { type: 'number', description: 'Minimum X coordinate.' },
+        minY: { type: 'number', description: 'Minimum Y coordinate.' },
+        minZ: { type: 'number', description: 'Minimum Z coordinate.' },
+        maxX: { type: 'number', description: 'Maximum X coordinate.' },
+        maxY: { type: 'number', description: 'Maximum Y coordinate.' },
+        maxZ: { type: 'number', description: 'Maximum Z coordinate.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['hostId', 'minX', 'minY', 'minZ', 'maxX', 'maxY', 'maxZ']
+    }
+  },
+
+  // --- update_opening -----------------------------------------------------
+  {
+    name:        'update_opening',
+    description: 'Updates an opening type and/or instance parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Opening ElementId.' },
+        typeId: { type: 'string', description: 'Optional target type id when supported.' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- create_area --------------------------------------------------------
+  {
+    name:        'create_area',
+    description: 'Creates an area in an area plan view at an XY point.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'Area plan View ElementId.' },
+        x: { type: 'number', description: 'Placement X coordinate.' },
+        y: { type: 'number', description: 'Placement Y coordinate.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        name: { type: 'string', description: 'Optional area name.' },
+        number: { type: 'string', description: 'Optional area number.' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['viewId', 'x', 'y']
+    }
+  },
+
+  // --- update_area --------------------------------------------------------
+  {
+    name:        'update_area',
+    description: 'Updates area name, number, and/or parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Area ElementId.' },
+        name: { type: 'string', description: 'Optional area name.' },
+        number: { type: 'string', description: 'Optional area number.' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- create_space -------------------------------------------------------
+  {
+    name:        'create_space',
+    description: 'Creates an MEP space at a level and XY point.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        levelId: { type: 'string', description: 'Target Level ElementId.' },
+        x: { type: 'number', description: 'Placement X coordinate.' },
+        y: { type: 'number', description: 'Placement Y coordinate.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        name: { type: 'string', description: 'Optional space name.' },
+        number: { type: 'string', description: 'Optional space number.' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['levelId', 'x', 'y']
+    }
+  },
+
+  // --- update_space -------------------------------------------------------
+  {
+    name:        'update_space',
+    description: 'Updates space name, number, and/or parameters.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        elementId: { type: 'string', description: 'Space ElementId.' },
+        name: { type: 'string', description: 'Optional space name.' },
+        number: { type: 'string', description: 'Optional space number.' },
+        parameters: { type: 'object', description: 'Optional instance parameters to set.' }
+      },
+      required: ['elementId']
+    }
+  },
+
+  // --- create_tag ---------------------------------------------------------
+  {
+    name:        'create_tag',
+    description: 'Creates an IndependentTag for an element in a view.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'Target view ElementId.' },
+        elementId: { type: 'string', description: 'ElementId to tag.' },
+        x: { type: 'number', description: 'Tag head X coordinate.' },
+        y: { type: 'number', description: 'Tag head Y coordinate.' },
+        z: { type: 'number', description: 'Tag head Z coordinate.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        tagTypeId: { type: 'string', description: 'Optional tag type id.' },
+        addLeader: { type: 'boolean', description: 'Add a leader. Default: false.', default: false }
+      },
+      required: ['viewId', 'elementId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- place_room_tag -----------------------------------------------------
+  {
+    name:        'place_room_tag',
+    description: 'Places a room tag in a view.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'Target view ElementId.' },
+        elementId: { type: 'string', description: 'Room ElementId.' },
+        x: { type: 'number', description: 'Tag head X coordinate.' },
+        y: { type: 'number', description: 'Tag head Y coordinate.' },
+        z: { type: 'number', description: 'Tag head Z coordinate.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        tagTypeId: { type: 'string', description: 'Optional room tag type id.' },
+        addLeader: { type: 'boolean', description: 'Add a leader. Default: false.', default: false }
+      },
+      required: ['viewId', 'elementId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- place_area_tag -----------------------------------------------------
+  {
+    name:        'place_area_tag',
+    description: 'Places an area tag in a view.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'Target view ElementId.' },
+        elementId: { type: 'string', description: 'Area ElementId.' },
+        x: { type: 'number', description: 'Tag head X coordinate.' },
+        y: { type: 'number', description: 'Tag head Y coordinate.' },
+        z: { type: 'number', description: 'Tag head Z coordinate.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        tagTypeId: { type: 'string', description: 'Optional area tag type id.' },
+        addLeader: { type: 'boolean', description: 'Add a leader. Default: false.', default: false }
+      },
+      required: ['viewId', 'elementId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- place_space_tag ----------------------------------------------------
+  {
+    name:        'place_space_tag',
+    description: 'Places a space tag in a view.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'Target view ElementId.' },
+        elementId: { type: 'string', description: 'Space ElementId.' },
+        x: { type: 'number', description: 'Tag head X coordinate.' },
+        y: { type: 'number', description: 'Tag head Y coordinate.' },
+        z: { type: 'number', description: 'Tag head Z coordinate.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        tagTypeId: { type: 'string', description: 'Optional space tag type id.' },
+        addLeader: { type: 'boolean', description: 'Add a leader. Default: false.', default: false }
+      },
+      required: ['viewId', 'elementId', 'x', 'y', 'z']
+    }
+  },
+
+  // --- create_dimension ---------------------------------------------------
+  {
+    name:        'create_dimension',
+    description: 'Creates a dimension between element references in a view.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'Target view ElementId.' },
+        elementIds: { type: 'array', description: 'ElementIds to dimension.', items: { type: 'string' } },
+        startX: { type: 'number', description: 'Dimension line start X.' },
+        startY: { type: 'number', description: 'Dimension line start Y.' },
+        startZ: { type: 'number', description: 'Dimension line start Z.' },
+        endX: { type: 'number', description: 'Dimension line end X.' },
+        endY: { type: 'number', description: 'Dimension line end Y.' },
+        endZ: { type: 'number', description: 'Dimension line end Z.' },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' },
+        dimensionTypeId: { type: 'string', description: 'Optional DimensionType id.' }
+      },
+      required: ['viewId', 'elementIds', 'startX', 'startY', 'startZ', 'endX', 'endY', 'endZ']
+    }
+  },
+
+  // --- create_filled_region ----------------------------------------------
+  {
+    name:        'create_filled_region',
+    description: 'Creates a filled region in a view from a closed polygon.',
+    inputSchema: {
+      type:       'object',
+      properties: {
+        viewId: { type: 'string', description: 'Target view ElementId.' },
+        filledRegionTypeId: { type: 'string', description: 'Optional FilledRegionType id.' },
+        points: {
+          type:        'array',
+          description: 'Closed boundary points; do not repeat the first point at the end.',
+          items: {
+            type:       'object',
+            properties: {
+              x: { type: 'number' },
+              y: { type: 'number' },
+              z: { type: 'number' }
+            },
+            required: ['x', 'y', 'z']
+          }
+        },
+        unit: { type: 'string', description: 'Coordinate unit: feet, meters, or millimeters. Default: feet.', default: 'feet' }
+      },
+      required: ['viewId', 'points']
+    }
+  },
+
+  // --- create_wall ---------------------------------------------------------
   {
     name:        'create_wall',
     description: 'Creates a straight wall in the active Revit document. ' +
