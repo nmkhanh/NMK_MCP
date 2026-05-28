@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RevitMcpAddin")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e3184dbd9bf12efee0e31335f53ce86e7309710e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1416317036f7d2702007d6f95d8e28c93ba76ea3")]
 [assembly: System.Reflection.AssemblyProductAttribute("RevitMcpAddin")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RevitMcpAddin")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

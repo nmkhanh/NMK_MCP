@@ -12,8 +12,267 @@
 //        emit both so the server works regardless of client.
 // ============================================================
 
+const stringProp = (description) => ({ type: 'string', description });
+const numberProp = (description) => ({ type: 'number', description });
+const integerProp = (description) => ({ type: 'integer', description });
+const booleanProp = (description) => ({ type: 'boolean', description });
+const stringArrayProp = (description) => ({ type: 'array', description, items: { type: 'string' } });
+const pointProp = {
+  type: 'object',
+  properties: {
+    x: numberProp('X coordinate.'),
+    y: numberProp('Y coordinate.'),
+    z: numberProp('Z coordinate.')
+  },
+  required: ['x', 'y', 'z']
+};
+const curveProp = {
+  type: 'object',
+  properties: { start: pointProp, end: pointProp },
+  required: ['start', 'end']
+};
+const curvesProp = { type: 'array', description: 'Line curves as start/end point pairs.', items: curveProp };
+const paramsProp = { type: 'object', description: 'Optional instance parameter values keyed by parameter name.', additionalProperties: true };
+const toolSchema = (properties = {}, required = []) => ({ type: 'object', properties, required });
+const rebarTool = (name, description, properties = {}, required = []) => ({
+  name,
+  description,
+  inputSchema: toolSchema(properties, required)
+});
+
+const rebarListProps = {
+  hostId: stringProp('Optional host ElementId.'),
+  kind: stringProp('Optional reinforcement kind hint.'),
+  includeParameters: booleanProp('Include instance parameters.'),
+  maxItems: integerProp('Maximum items to return.')
+};
+const typeListProps = {
+  nameContains: stringProp('Optional case-insensitive name filter.'),
+  maxItems: integerProp('Maximum items to return.')
+};
+const elementIdProps = {
+  elementId: stringProp('Revit ElementId.'),
+  includeParameters: booleanProp('Include instance parameters.')
+};
+const elementIdsProps = {
+  elementIds: stringArrayProp('ElementIds to process.'),
+  dryRun: booleanProp('Validate without modifying the document.'),
+  maxItems: integerProp('Maximum items allowed.')
+};
+const rebarSystemProps = {
+  hostId: stringProp('Valid rebar host ElementId.'),
+  typeId: stringProp('Area/path/fabric type ElementId.'),
+  barTypeId: stringProp('RebarBarType or fabric sheet type ElementId depending on tool.'),
+  hookTypeId: stringProp('Optional RebarHookType ElementId.'),
+  startHookTypeId: stringProp('Optional start RebarHookType ElementId.'),
+  endHookTypeId: stringProp('Optional end RebarHookType ElementId.'),
+  fabricSheetTypeId: stringProp('Optional FabricSheetType ElementId.'),
+  curves: curvesProp,
+  boundary: { type: 'array', description: 'Boundary points.', items: pointProp },
+  directionX: numberProp('Major direction X.'),
+  directionY: numberProp('Major direction Y.'),
+  directionZ: numberProp('Major direction Z.'),
+  normalX: numberProp('Normal X.'),
+  normalY: numberProp('Normal Y.'),
+  normalZ: numberProp('Normal Z.'),
+  flip: booleanProp('Flip path reinforcement.'),
+  unit: stringProp('feet, meters, or millimeters.'),
+  parameters: paramsProp
+};
+const workflowProps = {
+  hostId: stringProp('Valid rebar host ElementId.'),
+  barTypeId: stringProp('Optional RebarBarType ElementId.'),
+  hookTypeId: stringProp('Optional RebarHookType ElementId.'),
+  cover: numberProp('Cover offset.'),
+  spacing: numberProp('Spacing hint.'),
+  count: integerProp('Number of generated bars/sets.'),
+  unit: stringProp('feet, meters, or millimeters.'),
+  parameters: paramsProp
+};
+const createCouplerProps = {
+  couplerTypeId: stringProp('Optional coupler type ElementId. Defaults to inferred coupler type.'),
+  firstRebarId: stringProp('First Rebar ElementId.'),
+  firstEnd: integerProp('First rebar end, 0 or 1.'),
+  secondRebarId: stringProp('Optional second Rebar ElementId.'),
+  secondEnd: integerProp('Second rebar end, 0 or 1.'),
+  parameters: paramsProp
+};
+const REBAR_TOOLS = [
+  rebarTool('get_rebars', 'Lists Rebar elements with optional host filtering.', rebarListProps),
+  rebarTool('get_rebar_host_candidates', 'Lists concrete/structural elements that can host reinforcement.', {
+    category: stringProp('Optional BuiltInCategory suffix, e.g. StructuralColumns.'),
+    maxItems: integerProp('Maximum items to return.')
+  }),
+  rebarTool('get_rebar_bar_types', 'Lists available RebarBarType elements.', typeListProps),
+  rebarTool('get_rebar_shapes', 'Lists available RebarShape elements.', typeListProps),
+  rebarTool('get_rebar_hook_types', 'Lists available RebarHookType elements.', typeListProps),
+  rebarTool('get_rebar_cover_types', 'Lists rebar cover types and distances.', typeListProps),
+  rebarTool('get_rebar_constraints', 'Reads a rebar constraint/accessor summary.', elementIdProps, ['elementId']),
+  rebarTool('get_rebar_centerline_curves', 'Reads centerline curves for a rebar.', elementIdProps, ['elementId']),
+  rebarTool('create_rebar_from_curves', 'Creates shape-driven rebar from line curves on a valid host.', {
+    hostId: stringProp('Valid rebar host ElementId.'),
+    barTypeId: stringProp('Optional RebarBarType ElementId. Defaults to first available type.'),
+    startHookTypeId: stringProp('Optional start RebarHookType ElementId.'),
+    endHookTypeId: stringProp('Optional end RebarHookType ElementId.'),
+    style: stringProp('standard or stirrup_tie.'),
+    startHookOrientation: stringProp('left or right.'),
+    endHookOrientation: stringProp('left or right.'),
+    normalX: numberProp('Rebar plane normal X.'),
+    normalY: numberProp('Rebar plane normal Y.'),
+    normalZ: numberProp('Rebar plane normal Z.'),
+    curves: curvesProp,
+    unit: stringProp('feet, meters, or millimeters.'),
+    useExistingShapeIfPossible: booleanProp('Reuse a matching RebarShape when possible.'),
+    createNewShape: booleanProp('Create a new RebarShape if needed.'),
+    layoutRule: stringProp('Optional layout rule.'),
+    count: integerProp('Optional bar count.'),
+    spacing: numberProp('Optional spacing.'),
+    arrayLength: numberProp('Optional array length.'),
+    parameters: paramsProp
+  }, ['hostId', 'curves']),
+  rebarTool('create_rebar_from_shape', 'Creates shape-driven rebar from an existing RebarShape.', {
+    hostId: stringProp('Valid rebar host ElementId.'),
+    shapeId: stringProp('RebarShape ElementId.'),
+    barTypeId: stringProp('Optional RebarBarType ElementId.'),
+    origin: pointProp,
+    xVector: pointProp,
+    yVector: pointProp,
+    unit: stringProp('feet, meters, or millimeters.'),
+    parameters: paramsProp
+  }, ['hostId', 'shapeId']),
+  rebarTool('update_rebar_layout', 'Updates shape-driven rebar layout rule, count, spacing, and array length.', {
+    rebarId: stringProp('Rebar ElementId.'),
+    layoutRule: stringProp('single, number_with_spacing, fixed_number, maximum_spacing, or minimum_clear_spacing.'),
+    count: integerProp('Optional bar count.'),
+    spacing: numberProp('Optional spacing.'),
+    arrayLength: numberProp('Optional array length.'),
+    barsOnNormalSide: booleanProp('Bars on normal side.'),
+    includeFirstBar: booleanProp('Include first bar.'),
+    includeLastBar: booleanProp('Include last bar.'),
+    unit: stringProp('feet, meters, or millimeters.')
+  }, ['rebarId', 'layoutRule']),
+  rebarTool('update_rebar_hooks', 'Updates start/end hook type ids for a rebar.', {
+    rebarId: stringProp('Rebar ElementId.'),
+    startHookTypeId: stringProp('Optional start hook type ElementId.'),
+    endHookTypeId: stringProp('Optional end hook type ElementId.')
+  }, ['rebarId']),
+  rebarTool('update_rebar_constraints', 'Updates supported rebar constraint options and recomputes when available.', {
+    rebarId: stringProp('Rebar ElementId.'),
+    useRebarConstraintsToProduceVaryingBars: booleanProp('Toggle varying bars driven by constraints.')
+  }, ['rebarId']),
+  rebarTool('set_rebar_cover', 'Sets the common rebar cover type on a host.', {
+    hostId: stringProp('Valid rebar host ElementId.'),
+    coverTypeId: stringProp('Optional RebarCoverType ElementId. Defaults to first available type.')
+  }, ['hostId']),
+  rebarTool('set_rebar_visibility_in_view', 'Controls rebar/coupler visibility in a Revit view.', {
+    elementId: stringProp('Rebar, AreaReinforcement, or RebarCoupler ElementId.'),
+    viewId: stringProp('Optional view ElementId. Defaults to active view.'),
+    unobscured: booleanProp('Show unobscured in view.'),
+    presentationMode: stringProp('Optional RebarPresentationMode.'),
+    barIndex: integerProp('Optional bar index for hidden status.'),
+    hidden: booleanProp('Bar hidden status.')
+  }, ['elementId']),
+  rebarTool('delete_rebars', 'Deletes Rebar elements by id, with dry-run support.', elementIdsProps, ['elementIds']),
+  rebarTool('create_area_reinforcement', 'Creates AreaReinforcement from curves, boundary points, or host bounds.', rebarSystemProps, ['hostId']),
+  rebarTool('update_area_reinforcement', 'Updates type/parameters on an AreaReinforcement element.', {
+    elementId: stringProp('Reinforcement element id.'),
+    typeId: stringProp('Optional new type ElementId.'),
+    parameters: paramsProp
+  }, ['elementId']),
+  rebarTool('create_path_reinforcement', 'Creates PathReinforcement from curves or host bounds.', rebarSystemProps, ['hostId']),
+  rebarTool('update_path_reinforcement', 'Updates type/parameters on a PathReinforcement element.', {
+    elementId: stringProp('Reinforcement element id.'),
+    typeId: stringProp('Optional new type ElementId.'),
+    parameters: paramsProp
+  }, ['elementId']),
+  rebarTool('create_fabric_area', 'Creates FabricArea from host bounds or boundary loops.', rebarSystemProps, ['hostId']),
+  rebarTool('update_fabric_area', 'Updates type/parameters on a FabricArea element.', {
+    elementId: stringProp('Reinforcement element id.'),
+    typeId: stringProp('Optional new type ElementId.'),
+    parameters: paramsProp
+  }, ['elementId']),
+  rebarTool('place_fabric_sheet', 'Places a FabricSheet on a valid host.', rebarSystemProps, ['hostId']),
+  rebarTool('update_fabric_sheet', 'Updates type/parameters on a FabricSheet element.', {
+    elementId: stringProp('Reinforcement element id.'),
+    typeId: stringProp('Optional new type ElementId.'),
+    parameters: paramsProp
+  }, ['elementId']),
+  rebarTool('get_rebar_coupler_types', 'Lists rebar coupler type candidates.', typeListProps),
+  rebarTool('get_rebar_couplers', 'Lists RebarCoupler elements.', rebarListProps),
+  rebarTool('get_rebar_coupler', 'Reads one RebarCoupler by id.', elementIdProps, ['elementId']),
+  rebarTool('create_rebar_coupler', 'Creates a RebarCoupler on one or two rebar ends.', createCouplerProps, ['firstRebarId']),
+  rebarTool('update_rebar_coupler', 'Updates mark, rotation, and parameters on a RebarCoupler.', {
+    couplerId: stringProp('RebarCoupler ElementId.'),
+    couplerMark: stringProp('Optional coupler mark.'),
+    rotationAngleDegrees: numberProp('Optional rotation angle in degrees.'),
+    parameters: paramsProp
+  }, ['couplerId']),
+  rebarTool('change_rebar_coupler_type', 'Changes the type of a RebarCoupler.', {
+    couplerId: stringProp('RebarCoupler ElementId.'),
+    couplerTypeId: stringProp('New coupler type ElementId.')
+  }, ['couplerId', 'couplerTypeId']),
+  rebarTool('delete_rebar_couplers', 'Deletes RebarCoupler elements by id, with dry-run support.', elementIdsProps, ['elementIds']),
+  rebarTool('get_rebar_end_treatments', 'Lists EndTreatmentType elements.', typeListProps),
+  rebarTool('set_rebar_end_treatment', 'Sets an end treatment type on one rebar end.', {
+    rebarId: stringProp('Rebar ElementId.'),
+    end: integerProp('End index, 0 or 1.'),
+    endTreatmentTypeId: stringProp('EndTreatmentType ElementId.')
+  }, ['rebarId', 'end', 'endTreatmentTypeId']),
+  rebarTool('validate_rebar_coupler_placement', 'Validates rebar coupler placement inputs without creating a coupler.', createCouplerProps, ['firstRebarId']),
+  rebarTool('create_rebar_tag', 'Creates an IndependentTag for a rebar/reinforcement element.', {
+    viewId: stringProp('Optional view ElementId. Defaults to active view.'),
+    elementId: stringProp('ElementId to tag.'),
+    tagTypeId: stringProp('Optional tag type ElementId.'),
+    x: numberProp('Tag X.'),
+    y: numberProp('Tag Y.'),
+    z: numberProp('Tag Z.'),
+    unit: stringProp('feet, meters, or millimeters.'),
+    addLeader: booleanProp('Create tag leader.')
+  }, ['elementId', 'x', 'y', 'z']),
+  rebarTool('create_multi_rebar_annotation', 'Creates a MultiReferenceAnnotation for one or more rebars.', {
+    viewId: stringProp('Optional view ElementId. Defaults to active view.'),
+    elementIds: stringArrayProp('Rebar ElementIds to annotate.'),
+    typeId: stringProp('Optional MultiReferenceAnnotationType ElementId.'),
+    tagHeadX: numberProp('Tag head X.'),
+    tagHeadY: numberProp('Tag head Y.'),
+    tagHeadZ: numberProp('Tag head Z.'),
+    dimensionOriginX: numberProp('Dimension origin X.'),
+    dimensionOriginY: numberProp('Dimension origin Y.'),
+    dimensionOriginZ: numberProp('Dimension origin Z.'),
+    dimensionDirectionX: numberProp('Dimension line direction X.'),
+    dimensionDirectionY: numberProp('Dimension line direction Y.'),
+    dimensionDirectionZ: numberProp('Dimension line direction Z.'),
+    dimensionPlaneNormalX: numberProp('Dimension plane normal X.'),
+    dimensionPlaneNormalY: numberProp('Dimension plane normal Y.'),
+    dimensionPlaneNormalZ: numberProp('Dimension plane normal Z.'),
+    unit: stringProp('feet, meters, or millimeters.'),
+    addLeader: booleanProp('Create tag leader.')
+  }, ['elementIds']),
+  rebarTool('create_rebar_schedule', 'Creates a Rebar schedule with optional fields.', {
+    name: stringProp('Optional schedule name.'),
+    fieldNames: stringArrayProp('Schedulable field display names to add.')
+  }),
+  rebarTool('get_rebar_quantities', 'Returns bar and coupler quantity summaries.', {
+    hostId: stringProp('Optional host ElementId.'),
+    includeCouplers: booleanProp('Include coupler quantities.'),
+    maxItems: integerProp('Maximum items to inspect.')
+  }),
+  rebarTool('set_rebar_partition', 'Sets the Partition parameter on rebar/coupler elements.', {
+    elementIds: stringArrayProp('Rebar or coupler ElementIds.'),
+    partition: stringProp('Partition value.'),
+    maxItems: integerProp('Maximum items allowed.')
+  }, ['elementIds', 'partition']),
+  rebarTool('create_column_vertical_rebars', 'Creates vertical column rebars from the host bounding box.', workflowProps, ['hostId']),
+  rebarTool('create_column_ties', 'Creates column tie/stirrup rebars from the host bounding box.', workflowProps, ['hostId']),
+  rebarTool('create_beam_longitudinal_rebars', 'Creates longitudinal beam rebars from the host bounding box.', workflowProps, ['hostId']),
+  rebarTool('create_beam_stirrups', 'Creates beam stirrups from the host bounding box.', workflowProps, ['hostId']),
+  rebarTool('create_wall_rebar_grid', 'Creates a wall rebar grid from the host bounding box.', workflowProps, ['hostId']),
+  rebarTool('create_slab_rebar_grid', 'Creates a slab rebar grid from the host bounding box.', workflowProps, ['hostId'])
+];
+
 /** @type {import('./types').McpTool[]} */
 const TOOLS = [
+  ...REBAR_TOOLS,
   // ── select_elements_by_ids ───────────────────────────────
   {
     name:        'select_elements_by_ids',

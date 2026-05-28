@@ -4,11 +4,12 @@
 
 Last updated by Codex on 2026-05-28:
 
-- Total registered/fallback tools: 126, including the 7 original tools.
-- New roadmap tools implemented: 119.
-- Build status: `dotnet build NMK_MCP\RevitMcpAddin\RevitMcpAddin.csproj` succeeds with warnings only.
-- STDIO fallback status: `node -c NMK_MCP\RevitMcpStdio\tools.js` succeeds.
-- Completed groups: discovery/type lookup, level/grid, parameters, views/sheets/ViewSheetSet, generic CRUD/transform/batch, material/type/view-template/text/detail/model line, family placement wrappers, building objects, annotation/tag/dimension/filled region, MEP, schedules/export schedule, load/reload family, groups/assemblies, reload links/worksets/design-option assignment.
+- Total registered/fallback tools: 171, including the 7 original tools.
+- New roadmap tools implemented: 164.
+- Target Revit version: Revit 2026 (.NET 8, Nice3point Revit API 2026.0.4, add-in output copy path `C:\ProgramData\Autodesk\Revit\Addins\2026\RevitMcpAddin\`).
+- Build status: `dotnet build RevitMcpAddin\RevitMcpAddin.csproj` succeeds with warnings only.
+- STDIO fallback status: `node -c RevitMcpStdio\tools.js` succeeds.
+- Completed groups: discovery/type lookup, level/grid, parameters, views/sheets/ViewSheetSet, generic CRUD/transform/batch, material/type/view-template/text/detail/model line, family placement wrappers, building objects, annotation/tag/dimension/filled region, MEP, schedules/export schedule, load/reload family, groups/assemblies, reload links/worksets/design-option assignment, rebar/reinforcement/fabric/coupler/quantity workflows.
 - Remaining implementation work in this prompt: none for the listed roadmap tools. Remaining validation work: runtime smoke tests inside Revit with real project files and family/link/workshared samples.
 
 Mục tiêu: mở rộng `NMK_MCP` thành bộ MCP tool tổng quát cho Revit, ưu tiên tạo/sửa/truy vấn đối tượng và parameter theo cách có thể bảo trì. Tất cả tool mới phải bám đúng cấu trúc hiện tại của dự án: mỗi tool có handler riêng, service function riêng, model riêng khi cần, và đăng ký rõ ràng trong `App.cs`.
@@ -33,7 +34,7 @@ Tat ca phase trong roadmap da duoc trien khai vao code theo cau truc:
 
 1. Models trong `RevitMcpAddin/Models`.
 2. Service functions trong `RevitMcpAddin/Services/Functions`.
-3. Handler rieng tung tool trong `RevitMcpAddin/Mcp/Handlers`.
+3. Handler/tool definition trong `RevitMcpAddin/Mcp/Handlers`; Phase 8 dung shared `RebarToolHandler` registry de tranh lap boilerplate nhung moi tool van co schema va service call rieng.
 4. Dang ky trong `RevitMcpAddin/App.cs`.
 5. Fallback schema trong `RevitMcpStdio/tools.js`.
 
@@ -371,6 +372,75 @@ Tool cần tạo:
 16. `get_design_options`
 17. `set_element_design_option`
 
+### Phase 8 - Rebar, reinforcement, coupler
+
+Muc tieu: bo sung nhom tool tao/doc/sua cot thep, fabric reinforcement, annotation, quantity, wrapper workflow cho cau kien pho bien, va coupler. Rebar API phu thuoc manh vao host, shape, cover, constraint, view, va family/type trong file Revit thuc te, nen cac tool tao phuc tap can smoke test truc tiep trong Revit 2026 voi mau column/beam/wall/slab.
+
+Status: da trien khai trong Revit 2026 add-in va STDIO fallback; can smoke test runtime voi file Revit thuc te de xac nhan host/type/family/constraint rieng cua tung project.
+
+#### Phase 8A - Rebar discovery, type, host, cover
+
+1. `get_rebars`
+2. `get_rebar_host_candidates`
+3. `get_rebar_bar_types`
+4. `get_rebar_shapes`
+5. `get_rebar_hook_types`
+6. `get_rebar_cover_types`
+7. `get_rebar_constraints`
+8. `get_rebar_centerline_curves`
+
+#### Phase 8B - Rebar create/update co ban
+
+9. `create_rebar_from_curves`
+10. `create_rebar_from_shape`
+11. `update_rebar_layout`
+12. `update_rebar_hooks`
+13. `update_rebar_constraints`
+14. `set_rebar_cover`
+15. `set_rebar_visibility_in_view`
+16. `delete_rebars`
+
+#### Phase 8C - Area, path, fabric reinforcement
+
+17. `create_area_reinforcement`
+18. `update_area_reinforcement`
+19. `create_path_reinforcement`
+20. `update_path_reinforcement`
+21. `create_fabric_area`
+22. `update_fabric_area`
+23. `place_fabric_sheet`
+24. `update_fabric_sheet`
+
+#### Phase 8D - Rebar coupler
+
+25. `get_rebar_coupler_types`
+26. `get_rebar_couplers`
+27. `get_rebar_coupler`
+28. `create_rebar_coupler`
+29. `update_rebar_coupler`
+30. `change_rebar_coupler_type`
+31. `delete_rebar_couplers`
+32. `get_rebar_end_treatments`
+33. `set_rebar_end_treatment`
+34. `validate_rebar_coupler_placement`
+
+#### Phase 8E - Rebar annotation, schedule, quantity
+
+35. `create_rebar_tag`
+36. `create_multi_rebar_annotation`
+37. `create_rebar_schedule`
+38. `get_rebar_quantities`
+39. `set_rebar_partition`
+
+#### Phase 8F - Workflow wrapper cho cau kien pho bien
+
+40. `create_column_vertical_rebars`
+41. `create_column_ties`
+42. `create_beam_longitudinal_rebars`
+43. `create_beam_stirrups`
+44. `create_wall_rebar_grid`
+45. `create_slab_rebar_grid`
+
 ## 5. Danh sách tool mới sau khi bỏ 7 tool hiện có
 
 ### Core discovery và parameter
@@ -516,6 +586,54 @@ Tool cần tạo:
 118. `get_design_options`
 119. `set_element_design_option`
 
+### Rebar, reinforcement, coupler
+
+120. `get_rebars`
+121. `get_rebar_host_candidates`
+122. `get_rebar_bar_types`
+123. `get_rebar_shapes`
+124. `get_rebar_hook_types`
+125. `get_rebar_cover_types`
+126. `get_rebar_constraints`
+127. `get_rebar_centerline_curves`
+128. `create_rebar_from_curves`
+129. `create_rebar_from_shape`
+130. `update_rebar_layout`
+131. `update_rebar_hooks`
+132. `update_rebar_constraints`
+133. `set_rebar_cover`
+134. `set_rebar_visibility_in_view`
+135. `delete_rebars`
+136. `create_area_reinforcement`
+137. `update_area_reinforcement`
+138. `create_path_reinforcement`
+139. `update_path_reinforcement`
+140. `create_fabric_area`
+141. `update_fabric_area`
+142. `place_fabric_sheet`
+143. `update_fabric_sheet`
+144. `get_rebar_coupler_types`
+145. `get_rebar_couplers`
+146. `get_rebar_coupler`
+147. `create_rebar_coupler`
+148. `update_rebar_coupler`
+149. `change_rebar_coupler_type`
+150. `delete_rebar_couplers`
+151. `get_rebar_end_treatments`
+152. `set_rebar_end_treatment`
+153. `validate_rebar_coupler_placement`
+154. `create_rebar_tag`
+155. `create_multi_rebar_annotation`
+156. `create_rebar_schedule`
+157. `get_rebar_quantities`
+158. `set_rebar_partition`
+159. `create_column_vertical_rebars`
+160. `create_column_ties`
+161. `create_beam_longitudinal_rebars`
+162. `create_beam_stirrups`
+163. `create_wall_rebar_grid`
+164. `create_slab_rebar_grid`
+
 ## 6. Thứ tự triển khai đề xuất thực tế
 
 Thứ tự ưu tiên để có giá trị sớm và giảm rủi ro:
@@ -531,6 +649,7 @@ Thứ tự ưu tiên để có giá trị sớm và giảm rủi ro:
 9. Phase 5 annotation/material/type.
 10. Phase 6 MEP chia nhỏ.
 11. Phase 7 advanced.
+12. Phase 8 Rebar/Reinforcement/Coupler chia nho theo 8A-8F.
 
 Mỗi lần triển khai chỉ nên làm tối đa 8-12 tool, hoặc ít hơn nếu tool đụng nhiều Revit API phức tạp. Sau mỗi phase phải build/test trước khi sang phase tiếp theo.
 

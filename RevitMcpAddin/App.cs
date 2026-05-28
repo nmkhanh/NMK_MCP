@@ -180,6 +180,7 @@ namespace RevitMcpAddin
                     .Register(new UpdateCableTrayHandler(RevitSvc))
                     .Register(new ConnectMepElementsHandler(RevitSvc))
                     .Register(new DisconnectMepElementsHandler(RevitSvc))
+                    .RegisterRebarHandlers(RevitSvc)
                     .Register(new PrintSheetHandler(RevitSvc))
                     .Register(new ExportCadHandler(RevitSvc))
                     .Register(new ListCadExportTemplatesHandler(RevitSvc));

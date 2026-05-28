@@ -739,7 +739,7 @@ namespace RevitMcpAddin.Services
 
         private static bool SymbolMatchesCategory(FamilySymbol symbol, BuiltInCategory category)
         {
-            try { return symbol.Category != null && symbol.Category.Id.IntegerValue == (int)category; }
+            try { return symbol.Category != null && symbol.Category.Id.Value == (long)category; }
             catch { return true; }
         }
 

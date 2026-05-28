@@ -1,10 +1,10 @@
 ﻿RevitMcpAddin
-
+1.0.0.0
 
 library
 C#
 .cs
-D:\KHANHNGUYEN\MCP\NMK_MCP\RevitMcpAddin\obj\x64\Debug\
+d:\Test\RevitMcpAddin\obj\x64\Debug\
 RevitMcpAddin
 none
 false
@@ -12,8 +12,8 @@ TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR
 
 11256845736
 
-179-1105828855
-204-2097738015
+185-196863696
+4081079094786
 Views\MainView.xaml;
 
 False

@@ -31,13 +31,13 @@
           }
         }
       },
-      "Nice3point.Revit.Api.AdWindows/2025.0.2": {
+      "Nice3point.Revit.Api.AdWindows/2026.0.4": {
         "type": "package",
         "compile": {
           "ref/net8.0/AdWindows.dll": {}
         }
       },
-      "Nice3point.Revit.Api.RevitAPI/2025.0.2": {
+      "Nice3point.Revit.Api.RevitAPI/2026.0.4": {
         "type": "package",
         "compile": {
           "ref/net8.0/RevitAPI.dll": {
@@ -45,7 +45,7 @@
           }
         }
       },
-      "Nice3point.Revit.Api.RevitAPIUI/2025.0.2": {
+      "Nice3point.Revit.Api.RevitAPIUI/2026.0.4": {
         "type": "package",
         "compile": {
           "ref/net8.0/RevitAPIUI.dll": {
@@ -136,48 +136,48 @@
         "packageIcon.png"
       ]
     },
-    "Nice3point.Revit.Api.AdWindows/2025.0.2": {
-      "sha512": "owCTsSbof80u8DXOUfJ6HjnEkZ4e16T8NVcTcLGoCy+JeUcXI6Ibrh+lM9sPVwqIPz9CBLb+/53NuCZR0RNmPg==",
+    "Nice3point.Revit.Api.AdWindows/2026.0.4": {
+      "sha512": "t8Wduzf6dNTJK9eM0/Laba8A1E6BVCxM2c9/rDeYg/S+dgx6eiT5B3ah2zVIEtNADkjRfs3/6VHjKVdWQ0bzAg==",
       "type": "package",
-      "path": "nice3point.revit.api.adwindows/2025.0.2",
+      "path": "nice3point.revit.api.adwindows/2026.0.4",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "License.md",
         "Readme.md",
         "images/PackageIcon.png",
-        "nice3point.revit.api.adwindows.2025.0.2.nupkg.sha512",
+        "nice3point.revit.api.adwindows.2026.0.4.nupkg.sha512",
         "nice3point.revit.api.adwindows.nuspec",
         "ref/net8.0/AdWindows.dll"
       ]
     },
-    "Nice3point.Revit.Api.RevitAPI/2025.0.2": {
-      "sha512": "cfkgSjcWg0cqTgLO4zCsJRgZgoB6uB8vkcBsAGv2W6TrIkSlJ5D/Ys/xTj9my0PEwNF9vmDtxv1n2zSBq8Ni8Q==",
+    "Nice3point.Revit.Api.RevitAPI/2026.0.4": {
+      "sha512": "PzTkkmadOePSFt/Z5Z97uJIMvhJmqBElKSju74hRGVNP6efejAZnbtWbsRZiPHaN+1D4xH4Zckysr4Z1/so1FQ==",
       "type": "package",
-      "path": "nice3point.revit.api.revitapi/2025.0.2",
+      "path": "nice3point.revit.api.revitapi/2026.0.4",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "License.md",
         "Readme.md",
         "images/PackageIcon.png",
-        "nice3point.revit.api.revitapi.2025.0.2.nupkg.sha512",
+        "nice3point.revit.api.revitapi.2026.0.4.nupkg.sha512",
         "nice3point.revit.api.revitapi.nuspec",
         "ref/net8.0/RevitAPI.dll",
         "ref/net8.0/RevitAPI.xml"
       ]
     },
-    "Nice3point.Revit.Api.RevitAPIUI/2025.0.2": {
-      "sha512": "9C+HcZrsS00qf3cisRfIyl58KNrwIYOsJPTIy367mg00Y/XnSa5rvDwXQSIRZ32ZcYyE3ApB6472pyWoXdjMPQ==",
+    "Nice3point.Revit.Api.RevitAPIUI/2026.0.4": {
+      "sha512": "jcDgCWWyAHSwEYjbEzYO2J5PiopS6sGfuZwpX3mdbn+G998xj036h3JmPUlrLNW8sfIX9dlSn0aIWfoagXDxnw==",
       "type": "package",
-      "path": "nice3point.revit.api.revitapiui/2025.0.2",
+      "path": "nice3point.revit.api.revitapiui/2026.0.4",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "License.md",
         "Readme.md",
         "images/PackageIcon.png",
-        "nice3point.revit.api.revitapiui.2025.0.2.nupkg.sha512",
+        "nice3point.revit.api.revitapiui.2026.0.4.nupkg.sha512",
         "nice3point.revit.api.revitapiui.nuspec",
         "ref/net8.0/RevitAPIUI.dll",
         "ref/net8.0/RevitAPIUI.xml"
@@ -204,31 +204,26 @@
     "net8.0-windows7.0": [
       "CommunityToolkit.Mvvm >= 8.3.2",
       "Newtonsoft.Json >= 13.0.3",
-      "Nice3point.Revit.Api.AdWindows >= 2025.0.0",
-      "Nice3point.Revit.Api.RevitAPI >= 2025.0.0",
-      "Nice3point.Revit.Api.RevitAPIUI >= 2025.0.0",
+      "Nice3point.Revit.Api.AdWindows >= 2026.0.4",
+      "Nice3point.Revit.Api.RevitAPI >= 2026.0.4",
+      "Nice3point.Revit.Api.RevitAPIUI >= 2026.0.4",
       "Revit.Async >= 2.1.1"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Khanh.nguyen\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Admin\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\KHANHNGUYEN\\MCP\\NMK_MCP\\RevitMcpAddin\\RevitMcpAddin.csproj",
+      "projectUniqueName": "D:\\Test\\RevitMcpAddin\\RevitMcpAddin.csproj",
       "projectName": "RevitMcpAddin",
-      "projectPath": "D:\\KHANHNGUYEN\\MCP\\NMK_MCP\\RevitMcpAddin\\RevitMcpAddin.csproj",
-      "packagesPath": "C:\\Users\\Khanh.nguyen\\.nuget\\packages\\",
-      "outputPath": "D:\\KHANHNGUYEN\\MCP\\NMK_MCP\\RevitMcpAddin\\obj\\",
+      "projectPath": "D:\\Test\\RevitMcpAddin\\RevitMcpAddin.csproj",
+      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+      "outputPath": "D:\\Test\\RevitMcpAddin\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Khanh.nguyen\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -236,7 +231,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -255,7 +249,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "10.0.200"
     },
     "frameworks": {
       "net8.0-windows7.0": {
@@ -273,15 +267,15 @@
           },
           "Nice3point.Revit.Api.AdWindows": {
             "target": "Package",
-            "version": "[2025.0.0, )"
+            "version": "[2026.0.4, )"
           },
           "Nice3point.Revit.Api.RevitAPI": {
             "target": "Package",
-            "version": "[2025.0.0, )"
+            "version": "[2026.0.4, )"
           },
           "Nice3point.Revit.Api.RevitAPIUI": {
             "target": "Package",
-            "version": "[2025.0.0, )"
+            "version": "[2026.0.4, )"
           },
           "Revit.Async": {
             "target": "Package",
@@ -308,40 +302,8 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.308/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1603",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "RevitMcpAddin depends on Nice3point.Revit.Api.AdWindows (>= 2025.0.0) but Nice3point.Revit.Api.AdWindows 2025.0.0 was not found. Nice3point.Revit.Api.AdWindows 2025.0.2 was resolved instead.",
-      "libraryId": "Nice3point.Revit.Api.AdWindows",
-      "targetGraphs": [
-        "net8.0-windows7.0"
-      ]
-    },
-    {
-      "code": "NU1603",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "RevitMcpAddin depends on Nice3point.Revit.Api.RevitAPI (>= 2025.0.0) but Nice3point.Revit.Api.RevitAPI 2025.0.0 was not found. Nice3point.Revit.Api.RevitAPI 2025.0.2 was resolved instead.",
-      "libraryId": "Nice3point.Revit.Api.RevitAPI",
-      "targetGraphs": [
-        "net8.0-windows7.0"
-      ]
-    },
-    {
-      "code": "NU1603",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "RevitMcpAddin depends on Nice3point.Revit.Api.RevitAPIUI (>= 2025.0.0) but Nice3point.Revit.Api.RevitAPIUI 2025.0.0 was not found. Nice3point.Revit.Api.RevitAPIUI 2025.0.2 was resolved instead.",
-      "libraryId": "Nice3point.Revit.Api.RevitAPIUI",
-      "targetGraphs": [
-        "net8.0-windows7.0"
-      ]
-    }
-  ]
+  }
 }
