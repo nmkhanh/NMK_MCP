@@ -186,7 +186,12 @@ namespace RevitMcpAddin.Services
                     throw new ArgumentException("'parameterName' is required.");
 
                 var maxItems = NormalizeDiscoveryLimit(request.MaxItems, hardMax: 2000);
-                var collector = new FilteredElementCollector(doc).WhereElementIsNotElementType();
+                var collector = CreateScopedElementCollector(
+                        doc,
+                        uiApp.ActiveUIDocument?.ActiveView,
+                        request.UseActiveView,
+                        request.ViewId)
+                    .WhereElementIsNotElementType();
                 if (!string.IsNullOrWhiteSpace(request.Category))
                 {
                     if (!TryResolveCategory(request.Category, out var bic))
@@ -212,6 +217,8 @@ namespace RevitMcpAddin.Services
                     success = true,
                     count = elements.Count,
                     maxItems,
+                    useActiveView = request.UseActiveView,
+                    viewId = request.ViewId,
                     parameterName = request.ParameterName,
                     value = request.Value,
                     comparison = request.Comparison,

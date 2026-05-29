@@ -31,24 +31,24 @@
           }
         }
       },
-      "Nice3point.Revit.Api.AdWindows/2026.0.4": {
+      "Nice3point.Revit.Api.AdWindows/2026.4.10": {
         "type": "package",
         "compile": {
-          "ref/net8.0/AdWindows.dll": {}
+          "ref/net8.0-windows7.0/AdWindows.dll": {}
         }
       },
-      "Nice3point.Revit.Api.RevitAPI/2026.0.4": {
+      "Nice3point.Revit.Api.RevitAPI/2026.4.10": {
         "type": "package",
         "compile": {
-          "ref/net8.0/RevitAPI.dll": {
+          "ref/net8.0-windows7.0/RevitAPI.dll": {
             "related": ".xml"
           }
         }
       },
-      "Nice3point.Revit.Api.RevitAPIUI/2026.0.4": {
+      "Nice3point.Revit.Api.RevitAPIUI/2026.4.10": {
         "type": "package",
         "compile": {
-          "ref/net8.0/RevitAPIUI.dll": {
+          "ref/net8.0-windows7.0/RevitAPIUI.dll": {
             "related": ".xml"
           }
         }
@@ -60,6 +60,22 @@
         },
         "runtime": {
           "lib/netstandard2.1/Revit.Async.dll": {}
+        }
+      },
+      "System.Threading.Channels/8.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/System.Threading.Channels.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/System.Threading.Channels.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/net6.0/_._": {}
         }
       }
     }
@@ -136,51 +152,51 @@
         "packageIcon.png"
       ]
     },
-    "Nice3point.Revit.Api.AdWindows/2026.0.4": {
-      "sha512": "t8Wduzf6dNTJK9eM0/Laba8A1E6BVCxM2c9/rDeYg/S+dgx6eiT5B3ah2zVIEtNADkjRfs3/6VHjKVdWQ0bzAg==",
+    "Nice3point.Revit.Api.AdWindows/2026.4.10": {
+      "sha512": "i+LB/c2VVmfxCw+jk0tFHep77K2vYQfvYaMrjCzIvNvzNPAnxS542emCCv1orlXcJC/hK7bvwacfa1qGF97bsw==",
       "type": "package",
-      "path": "nice3point.revit.api.adwindows/2026.0.4",
+      "path": "nice3point.revit.api.adwindows/2026.4.10",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "License.md",
         "Readme.md",
         "images/PackageIcon.png",
-        "nice3point.revit.api.adwindows.2026.0.4.nupkg.sha512",
+        "nice3point.revit.api.adwindows.2026.4.10.nupkg.sha512",
         "nice3point.revit.api.adwindows.nuspec",
-        "ref/net8.0/AdWindows.dll"
+        "ref/net8.0-windows7.0/AdWindows.dll"
       ]
     },
-    "Nice3point.Revit.Api.RevitAPI/2026.0.4": {
-      "sha512": "PzTkkmadOePSFt/Z5Z97uJIMvhJmqBElKSju74hRGVNP6efejAZnbtWbsRZiPHaN+1D4xH4Zckysr4Z1/so1FQ==",
+    "Nice3point.Revit.Api.RevitAPI/2026.4.10": {
+      "sha512": "Kb4CHF9AKZ+49tHwdHyuKLrL1O/T6zOFUFZSOhB4lhiTao9akNmS6qTMVeD0oZo5m93dQX7CxnwloPxm1NFmRw==",
       "type": "package",
-      "path": "nice3point.revit.api.revitapi/2026.0.4",
+      "path": "nice3point.revit.api.revitapi/2026.4.10",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "License.md",
         "Readme.md",
         "images/PackageIcon.png",
-        "nice3point.revit.api.revitapi.2026.0.4.nupkg.sha512",
+        "nice3point.revit.api.revitapi.2026.4.10.nupkg.sha512",
         "nice3point.revit.api.revitapi.nuspec",
-        "ref/net8.0/RevitAPI.dll",
-        "ref/net8.0/RevitAPI.xml"
+        "ref/net8.0-windows7.0/RevitAPI.dll",
+        "ref/net8.0-windows7.0/RevitAPI.xml"
       ]
     },
-    "Nice3point.Revit.Api.RevitAPIUI/2026.0.4": {
-      "sha512": "jcDgCWWyAHSwEYjbEzYO2J5PiopS6sGfuZwpX3mdbn+G998xj036h3JmPUlrLNW8sfIX9dlSn0aIWfoagXDxnw==",
+    "Nice3point.Revit.Api.RevitAPIUI/2026.4.10": {
+      "sha512": "/U9vJA2KZcouTSXKBstuBfz6m5TmE1WLuZyITkMoRwv51YTq5GlZszvW/v5GnCFWdwOCRtHxMsBR4cWnH/btKw==",
       "type": "package",
-      "path": "nice3point.revit.api.revitapiui/2026.0.4",
+      "path": "nice3point.revit.api.revitapiui/2026.4.10",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "License.md",
         "Readme.md",
         "images/PackageIcon.png",
-        "nice3point.revit.api.revitapiui.2026.0.4.nupkg.sha512",
+        "nice3point.revit.api.revitapiui.2026.4.10.nupkg.sha512",
         "nice3point.revit.api.revitapiui.nuspec",
-        "ref/net8.0/RevitAPIUI.dll",
-        "ref/net8.0/RevitAPIUI.xml"
+        "ref/net8.0-windows7.0/RevitAPIUI.dll",
+        "ref/net8.0-windows7.0/RevitAPIUI.xml"
       ]
     },
     "Revit.Async/2.1.1": {
@@ -198,32 +214,70 @@
         "revit.async.2.1.1.nupkg.sha512",
         "revit.async.nuspec"
       ]
+    },
+    "System.Threading.Channels/8.0.0": {
+      "sha512": "CMaFr7v+57RW7uZfZkPExsPB6ljwzhjACWW1gfU35Y56rk72B/Wu+sTqxVmGSk4SFUlPc3cjeKND0zktziyjBA==",
+      "type": "package",
+      "path": "system.threading.channels/8.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "PACKAGE.md",
+        "THIRD-PARTY-NOTICES.TXT",
+        "buildTransitive/net461/System.Threading.Channels.targets",
+        "buildTransitive/net462/_._",
+        "buildTransitive/net6.0/_._",
+        "buildTransitive/netcoreapp2.0/System.Threading.Channels.targets",
+        "lib/net462/System.Threading.Channels.dll",
+        "lib/net462/System.Threading.Channels.xml",
+        "lib/net6.0/System.Threading.Channels.dll",
+        "lib/net6.0/System.Threading.Channels.xml",
+        "lib/net7.0/System.Threading.Channels.dll",
+        "lib/net7.0/System.Threading.Channels.xml",
+        "lib/net8.0/System.Threading.Channels.dll",
+        "lib/net8.0/System.Threading.Channels.xml",
+        "lib/netstandard2.0/System.Threading.Channels.dll",
+        "lib/netstandard2.0/System.Threading.Channels.xml",
+        "lib/netstandard2.1/System.Threading.Channels.dll",
+        "lib/netstandard2.1/System.Threading.Channels.xml",
+        "system.threading.channels.8.0.0.nupkg.sha512",
+        "system.threading.channels.nuspec",
+        "useSharedDesignerContext.txt"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     "net8.0-windows7.0": [
       "CommunityToolkit.Mvvm >= 8.3.2",
       "Newtonsoft.Json >= 13.0.3",
-      "Nice3point.Revit.Api.AdWindows >= 2026.0.4",
-      "Nice3point.Revit.Api.RevitAPI >= 2026.0.4",
-      "Nice3point.Revit.Api.RevitAPIUI >= 2026.0.4",
-      "Revit.Async >= 2.1.1"
+      "Nice3point.Revit.Api.AdWindows >= 2026.*",
+      "Nice3point.Revit.Api.RevitAPI >= 2026.*",
+      "Nice3point.Revit.Api.RevitAPIUI >= 2026.*",
+      "Revit.Async >= 2.1.1",
+      "System.Threading.Channels >= 8.0.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Admin\\.nuget\\packages\\": {}
+    "C:\\Users\\Khanh.nguyen\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Test\\RevitMcpAddin\\RevitMcpAddin.csproj",
+      "projectUniqueName": "D:\\KHANHNGUYEN\\MCP\\NMK_MCP\\RevitMcpAddin\\RevitMcpAddin.csproj",
       "projectName": "RevitMcpAddin",
-      "projectPath": "D:\\Test\\RevitMcpAddin\\RevitMcpAddin.csproj",
-      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "D:\\Test\\RevitMcpAddin\\obj\\",
+      "projectPath": "D:\\KHANHNGUYEN\\MCP\\NMK_MCP\\RevitMcpAddin\\RevitMcpAddin.csproj",
+      "packagesPath": "C:\\Users\\Khanh.nguyen\\.nuget\\packages\\",
+      "outputPath": "D:\\KHANHNGUYEN\\MCP\\NMK_MCP\\RevitMcpAddin\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Khanh.nguyen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -231,6 +285,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -249,7 +304,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "10.0.200"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net8.0-windows7.0": {
@@ -257,30 +312,31 @@
         "dependencies": {
           "CommunityToolkit.Mvvm": {
             "target": "Package",
-            "version": "[8.3.2, )",
-            "generatePathProperty": true
+            "version": "[8.3.2, )"
           },
           "Newtonsoft.Json": {
             "target": "Package",
-            "version": "[13.0.3, )",
-            "generatePathProperty": true
+            "version": "[13.0.3, )"
           },
           "Nice3point.Revit.Api.AdWindows": {
             "target": "Package",
-            "version": "[2026.0.4, )"
+            "version": "[2026.*, )"
           },
           "Nice3point.Revit.Api.RevitAPI": {
             "target": "Package",
-            "version": "[2026.0.4, )"
+            "version": "[2026.*, )"
           },
           "Nice3point.Revit.Api.RevitAPIUI": {
             "target": "Package",
-            "version": "[2026.0.4, )"
+            "version": "[2026.*, )"
           },
           "Revit.Async": {
             "target": "Package",
-            "version": "[2.1.1, )",
-            "generatePathProperty": true
+            "version": "[2.1.1, )"
+          },
+          "System.Threading.Channels": {
+            "target": "Package",
+            "version": "[8.0.0, )"
           }
         },
         "imports": [
@@ -298,11 +354,11 @@
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           },
-          "Microsoft.WindowsDesktop.App.WPF": {
+          "Microsoft.WindowsDesktop.App": {
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.308/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

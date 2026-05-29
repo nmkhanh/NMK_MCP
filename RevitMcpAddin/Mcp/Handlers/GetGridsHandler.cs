@@ -23,7 +23,11 @@ namespace RevitMcpAddin.Mcp.Handlers
             InputSchema = new
             {
                 type = "object",
-                properties = new { },
+                properties = new
+                {
+                    useActiveView = new { type = "boolean", description = "When true, return only grids visible in the active view. Default: false.", @default = false },
+                    viewId = new { type = "string", description = "Optional view ElementId to scope the query. Overrides useActiveView when supplied." }
+                },
                 required = new string[] { }
             }
         };
@@ -32,7 +36,9 @@ namespace RevitMcpAddin.Mcp.Handlers
         {
             try
             {
-                var result = await _revitService.GetGridsAsync(cancellationToken);
+                var useActiveView = arguments?["useActiveView"]?.Value<bool>() ?? false;
+                var viewId = arguments?["viewId"]?.Value<string>();
+                var result = await _revitService.GetGridsAsync(useActiveView, viewId, cancellationToken);
                 return ToolHandlerResult.FromJson(result);
             }
             catch (Exception ex)

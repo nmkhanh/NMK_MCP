@@ -20,3 +20,5 @@ D:\KHANHNGUYEN\MCP\NMK_MCP\RevitMcpAddin\obj\Debug\RevitMcpAddin.dll
 D:\KHANHNGUYEN\MCP\NMK_MCP\RevitMcpAddin\obj\Debug\refint\RevitMcpAddin.dll
 D:\KHANHNGUYEN\MCP\NMK_MCP\RevitMcpAddin\obj\Debug\RevitMcpAddin.pdb
 D:\KHANHNGUYEN\MCP\NMK_MCP\RevitMcpAddin\obj\Debug\ref\RevitMcpAddin.dll
+D:\KHANHNGUYEN\MCP\NMK_MCP\RevitMcpAddin\bin\Debug\RevitMcpAddin.runtimeconfig.json
+D:\KHANHNGUYEN\MCP\NMK_MCP\RevitMcpAddin\obj\Debug\RevitMcpAddin.genruntimeconfig.cache

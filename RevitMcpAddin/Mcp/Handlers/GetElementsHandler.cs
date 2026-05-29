@@ -62,6 +62,17 @@ namespace RevitMcpAddin.Mcp.Handlers
                                       "Set to true only when you need parameter values.",
                         @default    = false
                     },
+                    useActiveView = new
+                    {
+                        type        = "boolean",
+                        description = "When true, return only elements visible in the active view. Default: false.",
+                        @default    = false
+                    },
+                    viewId = new
+                    {
+                        type        = "string",
+                        description = "Optional view ElementId to scope the query. Overrides useActiveView when supplied."
+                    },
                     parameterFilters = new
                     {
                         type        = "array",
@@ -107,6 +118,8 @@ namespace RevitMcpAddin.Mcp.Handlers
                     return ToolHandlerResult.FromError("'category' parameter is required.");
 
                 var includeParameters = arguments?["includeParameters"]?.Value<bool>() ?? false;
+                var useActiveView = arguments?["useActiveView"]?.Value<bool>() ?? false;
+                var viewId = arguments?["viewId"]?.Value<string>();
 
                 // Parse optional parameterFilters array — supports shared + built-in params
                 List<(string Name, string Value)>? parameterFilters = null;
@@ -125,17 +138,19 @@ namespace RevitMcpAddin.Mcp.Handlers
                 }
 
                 Logger.Info($"get_elements: category='{category}', includeParams={includeParameters}, " +
-                            $"filters={parameterFilters?.Count ?? 0}");
+                            $"filters={parameterFilters?.Count ?? 0}, useActiveView={useActiveView}, viewId={viewId}");
 
                 // ── Delegate to RevitService ─────────────────────────────
                 var elements = await _revitService.GetElementsAsync(
-                    category, 0, includeParameters, parameterFilters, cancellationToken);
+                    category, 0, includeParameters, parameterFilters, useActiveView, viewId, cancellationToken);
 
                 var summary = new
                 {
                     category,
                     returnedCount = elements.Count,
                     includeParameters,
+                    useActiveView,
+                    viewId,
                     filterCount   = parameterFilters?.Count ?? 0,
                     elements
                 };

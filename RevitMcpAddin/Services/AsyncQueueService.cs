@@ -136,9 +136,12 @@ namespace RevitMcpAddin.Services
             {
                 try
                 {
-                    await foreach (var item in _channel.Reader.ReadAllAsync(ct))
+                    while (await _channel.Reader.WaitToReadAsync(ct))
                     {
-                        await ExecuteWorkItemAsync(item, ct);
+                        while (_channel.Reader.TryRead(out var item))
+                        {
+                            await ExecuteWorkItemAsync(item, ct);
+                        }
                     }
                     break; // channel completed normally (service disposed)
                 }

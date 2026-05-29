@@ -3,6 +3,8 @@ using Autodesk.Revit.DB.Structure;
 using Newtonsoft.Json.Linq;
 using RevitMcpAddin.Models;
 using RevitMcpAddin.Utils;
+using Point = Autodesk.Revit.DB.Point;
+using View = Autodesk.Revit.DB.View;
 
 namespace RevitMcpAddin.Services
 {

@@ -5,6 +5,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RevitMcpAddin.Mcp;
 using RevitMcpAddin.Utils;
+using Application = System.Windows.Application;
+using Clipboard = System.Windows.Clipboard;
+using Color = System.Windows.Media.Color;
 
 namespace RevitMcpAddin.ViewModels
 {

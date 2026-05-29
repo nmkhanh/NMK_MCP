@@ -21,7 +21,11 @@ namespace RevitMcpAddin.Services
                     ? ElementId.InvalidElementId
                     : ResolveRequiredElementId(doc, request.HostId, "hostId");
 
-                var rebars = new FilteredElementCollector(doc)
+                var rebars = CreateScopedElementCollector(
+                        doc,
+                        uiApp.ActiveUIDocument?.ActiveView,
+                        request.UseActiveView,
+                        request.ViewId)
                     .OfClass(typeof(Rebar))
                     .Cast<Rebar>()
                     .Where(r => hostId == ElementId.InvalidElementId || SafeElementId(() => r.GetHostId()) == hostId)
@@ -34,6 +38,8 @@ namespace RevitMcpAddin.Services
                     success = true,
                     count = rebars.Count,
                     maxItems,
+                    useActiveView = request.UseActiveView,
+                    viewId = request.ViewId,
                     hostId = hostId == ElementId.InvalidElementId ? null : hostId.ToString(),
                     rebars,
                     message = $"Found {rebars.Count} rebar element(s)."
@@ -48,7 +54,12 @@ namespace RevitMcpAddin.Services
                 var doc = uiApp.ActiveUIDocument?.Document
                     ?? throw new InvalidOperationException("No active document.");
                 var maxItems = NormalizeRebarLimit(request.MaxItems, hardMax: 1_000);
-                var collector = new FilteredElementCollector(doc).WhereElementIsNotElementType();
+                var collector = CreateScopedElementCollector(
+                        doc,
+                        uiApp.ActiveUIDocument?.ActiveView,
+                        request.UseActiveView,
+                        request.ViewId)
+                    .WhereElementIsNotElementType();
                 if (!string.IsNullOrWhiteSpace(request.Category))
                 {
                     if (!TryResolveCategory(request.Category, out var bic))
@@ -79,6 +90,8 @@ namespace RevitMcpAddin.Services
                     success = true,
                     count = hosts.Count,
                     maxItems,
+                    useActiveView = request.UseActiveView,
+                    viewId = request.ViewId,
                     hosts,
                     message = $"Found {hosts.Count} rebar host candidate(s)."
                 });
@@ -302,9 +315,13 @@ namespace RevitMcpAddin.Services
                     if (request.UseRebarConstraintsToProduceVaryingBars.HasValue)
                     {
                         var accessor = rebar.GetShapeDrivenAccessor();
+#if R26
                         accessor.UseRebarConstraintsToProduceVaryingBars =
                             request.UseRebarConstraintsToProduceVaryingBars.Value;
                         changed.Add("useRebarConstraintsToProduceVaryingBars");
+#else
+                        throw new NotSupportedException("useRebarConstraintsToProduceVaryingBars is only available in Revit 2026 builds.");
+#endif
                     }
                     var manager = Safe(() => rebar.GetRebarConstraintsManager(), null);
                     RecomputeConstraintsIfAvailable(manager);
@@ -615,7 +632,11 @@ namespace RevitMcpAddin.Services
                 var doc = uiApp.ActiveUIDocument?.Document
                     ?? throw new InvalidOperationException("No active document.");
                 var maxItems = NormalizeRebarLimit(request.MaxItems);
-                var couplers = new FilteredElementCollector(doc)
+                var couplers = CreateScopedElementCollector(
+                        doc,
+                        uiApp.ActiveUIDocument?.ActiveView,
+                        request.UseActiveView,
+                        request.ViewId)
                     .OfClass(typeof(RebarCoupler))
                     .Cast<RebarCoupler>()
                     .Take(maxItems)
@@ -627,6 +648,8 @@ namespace RevitMcpAddin.Services
                     success = true,
                     count = couplers.Count,
                     maxItems,
+                    useActiveView = request.UseActiveView,
+                    viewId = request.ViewId,
                     couplers,
                     message = $"Found {couplers.Count} rebar coupler(s)."
                 });
@@ -991,7 +1014,11 @@ namespace RevitMcpAddin.Services
                     ? ElementId.InvalidElementId
                     : ResolveRequiredElementId(doc, request.HostId, "hostId");
 
-                var rebarRows = new FilteredElementCollector(doc)
+                var rebarRows = CreateScopedElementCollector(
+                        doc,
+                        uiApp.ActiveUIDocument?.ActiveView,
+                        request.UseActiveView,
+                        request.ViewId)
                     .OfClass(typeof(Rebar))
                     .Cast<Rebar>()
                     .Where(r => hostId == ElementId.InvalidElementId || SafeElementId(() => r.GetHostId()) == hostId)
@@ -1000,7 +1027,11 @@ namespace RevitMcpAddin.Services
                     .ToList();
 
                 var couplerRows = request.IncludeCouplers
-                    ? new FilteredElementCollector(doc)
+                    ? CreateScopedElementCollector(
+                            doc,
+                            uiApp.ActiveUIDocument?.ActiveView,
+                            request.UseActiveView,
+                            request.ViewId)
                         .OfClass(typeof(RebarCoupler))
                         .Cast<RebarCoupler>()
                         .Take(maxItems)
@@ -1015,6 +1046,8 @@ namespace RevitMcpAddin.Services
                 {
                     success = true,
                     hostId = hostId == ElementId.InvalidElementId ? null : hostId.ToString(),
+                    useActiveView = request.UseActiveView,
+                    viewId = request.ViewId,
                     rebarCount = rebarRows.Count,
                     couplerCount = couplerRows.Count,
                     totalBars,
@@ -1673,9 +1706,15 @@ namespace RevitMcpAddin.Services
 
         private static object BuildShapeDrivenAccessorInfo(RebarShapeDrivenAccessor accessor)
         {
+#if R26
+            bool? useRebarConstraintsToProduceVaryingBars =
+                Safe(() => accessor.UseRebarConstraintsToProduceVaryingBars, false);
+#else
+            bool? useRebarConstraintsToProduceVaryingBars = null;
+#endif
             return new
             {
-                useRebarConstraintsToProduceVaryingBars = Safe(() => accessor.UseRebarConstraintsToProduceVaryingBars, false),
+                useRebarConstraintsToProduceVaryingBars,
                 arrayLength = Safe(() => accessor.ArrayLength, 0.0),
                 barsOnNormalSide = Safe(() => accessor.BarsOnNormalSide, false),
                 normal = Safe(() => BuildPointInfo(accessor.Normal), null),

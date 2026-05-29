@@ -22,6 +22,11 @@ namespace RevitMcpAddin.Services
   public sealed partial class RevitService
   {
     private const int PrintTimeoutMs = 180_000; // 3 minutes
+#if R24
+    private const string RevitBuildVersion = "2024";
+#else
+    private const string RevitBuildVersion = "2026";
+#endif
 
     // ── Public method ─────────────────────────────────────────────────
 
@@ -205,7 +210,7 @@ namespace RevitMcpAddin.Services
         }
         catch (Exception ex)
         {
-          File.WriteAllText($@"C:\ProgramData\Autodesk\Revit\Addins\2025\RevitMcpAddin\{ex.Message}.txt", $"{ex.Message}");
+          File.WriteAllText($@"C:\ProgramData\Autodesk\Revit\Addins\{RevitBuildVersion}\RevitMcpAddin\{ex.Message}.txt", $"{ex.Message}");
         }
 
         Trace.WriteLine($"[RevitMCP][PRINT] Sheet {targetSheet.SheetNumber} → {outputFile}");

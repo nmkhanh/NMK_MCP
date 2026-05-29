@@ -6,14 +6,21 @@ namespace RevitMcpAddin.Services
 {
     public sealed partial class RevitService
     {
-        public Task<object> GetLevelsAsync(CancellationToken ct = default)
+        public Task<object> GetLevelsAsync(
+            bool useActiveView = false,
+            string? viewId = null,
+            CancellationToken ct = default)
         {
             return _queue.EnqueueAsync(uiApp =>
             {
                 var doc = uiApp.ActiveUIDocument?.Document
                     ?? throw new InvalidOperationException("No active document.");
 
-                var levels = new FilteredElementCollector(doc)
+                var levels = CreateScopedElementCollector(
+                        doc,
+                        uiApp.ActiveUIDocument?.ActiveView,
+                        useActiveView,
+                        viewId)
                     .OfClass(typeof(Level))
                     .Cast<Level>()
                     .OrderBy(l => l.Elevation)
@@ -24,6 +31,8 @@ namespace RevitMcpAddin.Services
                 {
                     success = true,
                     count = levels.Count,
+                    useActiveView,
+                    viewId,
                     levels,
                     message = $"Found {levels.Count} level(s)."
                 });

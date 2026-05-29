@@ -30,7 +30,9 @@ namespace RevitMcpAddin.Mcp.Handlers
                     category = new { type = "string", description = "Optional BuiltInCategory suffix, e.g. Walls, Doors, Rooms." },
                     comparison = new { type = "string", description = "equals, contains, startsWith, endsWith, or notEquals. Default: equals.", @default = "equals" },
                     includeParameters = new { type = "boolean", description = "Include a small parameter sample in results. Default: false.", @default = false },
-                    maxItems = new { type = "integer", description = "Safety cap. Default: 200, hard max: 2000.", @default = 200 }
+                    maxItems = new { type = "integer", description = "Safety cap. Default: 200, hard max: 2000.", @default = 200 },
+                    useActiveView = new { type = "boolean", description = "When true, search only elements visible in the active view. Default: false.", @default = false },
+                    viewId = new { type = "string", description = "Optional view ElementId to scope the search. Overrides useActiveView when supplied." }
                 },
                 required = new[] { "parameterName" }
             }

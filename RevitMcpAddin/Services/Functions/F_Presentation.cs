@@ -1,5 +1,7 @@
 using Autodesk.Revit.DB;
 using RevitMcpAddin.Models;
+using Color = Autodesk.Revit.DB.Color;
+using View = Autodesk.Revit.DB.View;
 
 namespace RevitMcpAddin.Services
 {
@@ -429,14 +431,19 @@ namespace RevitMcpAddin.Services
             }
             if (transparency.HasValue)
             {
-                material.Transparency = Math.Clamp(transparency.Value, 0, 100);
+                material.Transparency = ClampInt(transparency.Value, 0, 100);
                 changed?.Add("transparency");
             }
         }
 
         private static byte ClampByte(int value)
         {
-            return (byte)Math.Clamp(value, 0, 255);
+            return (byte)ClampInt(value, 0, 255);
+        }
+
+        private static int ClampInt(int value, int min, int max)
+        {
+            return Math.Min(Math.Max(value, min), max);
         }
 
         private static object BuildMaterialInfo(Material material)

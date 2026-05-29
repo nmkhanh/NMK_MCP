@@ -354,7 +354,7 @@ namespace RevitMcpAddin.Mcp
                 {
                     await Task.Delay(HeartbeatIntervalMs, linked.Token);
                     await session.WriteRawAsync(": keep-alive\n\n", linked.Token);
-                    Trace.WriteLine($"[RevitMCP][SSE ] ♥ keep-alive → {sessionId[..8]}…");
+                    Trace.WriteLine($"[RevitMCP][SSE ] ♥ keep-alive → {sessionId.Substring(0, 8)}…");
                 }
             }
             catch (OperationCanceledException) { /* normal close */ }
@@ -409,7 +409,7 @@ namespace RevitMcpAddin.Mcp
                        leaveOpen: true))
                 body = await sr.ReadToEndAsync(ct);
 
-            var sidShort = sessionId.Length >= 8 ? sessionId[..8] : sessionId;
+            var sidShort = sessionId.Length >= 8 ? sessionId.Substring(0, 8) : sessionId;
             Trace.WriteLine($"[RevitMCP][RECV] [{sidShort}…] {body}");
             Logger.Info($"← [{sidShort}…] {body}");
 
@@ -542,7 +542,12 @@ namespace RevitMcpAddin.Mcp
             await _writeLock.WaitAsync(ct);
             try
             {
+#if NET48
+                ct.ThrowIfCancellationRequested();
+                await _writer.WriteAsync(raw);
+#else
                 await _writer.WriteAsync(raw.AsMemory(), ct);
+#endif
                 // Flush to the underlying network buffer immediately.
                 // Without this the bytes sit in the StreamWriter buffer and
                 // the client never receives them (proxy-buffering problem).

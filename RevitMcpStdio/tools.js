@@ -59,6 +59,10 @@ const elementIdsProps = {
   dryRun: booleanProp('Validate without modifying the document.'),
   maxItems: integerProp('Maximum items allowed.')
 };
+const activeViewScopeProps = {
+  useActiveView: { type: 'boolean', description: 'When true, scope the query to elements visible in the active view. Default: false.', default: false },
+  viewId: stringProp('Optional view ElementId to scope the query. Overrides useActiveView when supplied.')
+};
 const rebarSystemProps = {
   hostId: stringProp('Valid rebar host ElementId.'),
   typeId: stringProp('Area/path/fabric type ElementId.'),
@@ -98,10 +102,11 @@ const createCouplerProps = {
   parameters: paramsProp
 };
 const REBAR_TOOLS = [
-  rebarTool('get_rebars', 'Lists Rebar elements with optional host filtering.', rebarListProps),
+  rebarTool('get_rebars', 'Lists Rebar elements with optional host filtering.', { ...rebarListProps, ...activeViewScopeProps }),
   rebarTool('get_rebar_host_candidates', 'Lists concrete/structural elements that can host reinforcement.', {
     category: stringProp('Optional BuiltInCategory suffix, e.g. StructuralColumns.'),
-    maxItems: integerProp('Maximum items to return.')
+    maxItems: integerProp('Maximum items to return.'),
+    ...activeViewScopeProps
   }),
   rebarTool('get_rebar_bar_types', 'Lists available RebarBarType elements.', typeListProps),
   rebarTool('get_rebar_shapes', 'Lists available RebarShape elements.', typeListProps),
@@ -198,7 +203,7 @@ const REBAR_TOOLS = [
     parameters: paramsProp
   }, ['elementId']),
   rebarTool('get_rebar_coupler_types', 'Lists rebar coupler type candidates.', typeListProps),
-  rebarTool('get_rebar_couplers', 'Lists RebarCoupler elements.', rebarListProps),
+  rebarTool('get_rebar_couplers', 'Lists RebarCoupler elements.', { ...rebarListProps, ...activeViewScopeProps }),
   rebarTool('get_rebar_coupler', 'Reads one RebarCoupler by id.', elementIdProps, ['elementId']),
   rebarTool('create_rebar_coupler', 'Creates a RebarCoupler on one or two rebar ends.', createCouplerProps, ['firstRebarId']),
   rebarTool('update_rebar_coupler', 'Updates mark, rotation, and parameters on a RebarCoupler.', {
@@ -255,7 +260,8 @@ const REBAR_TOOLS = [
   rebarTool('get_rebar_quantities', 'Returns bar and coupler quantity summaries.', {
     hostId: stringProp('Optional host ElementId.'),
     includeCouplers: booleanProp('Include coupler quantities.'),
-    maxItems: integerProp('Maximum items to inspect.')
+    maxItems: integerProp('Maximum items to inspect.'),
+    ...activeViewScopeProps
   }),
   rebarTool('set_rebar_partition', 'Sets the Partition parameter on rebar/coupler elements.', {
     elementIds: stringArrayProp('Rebar or coupler ElementIds.'),
@@ -333,6 +339,7 @@ const TOOLS = [
           description: 'Include Revit element parameters in the response. Slow on large result sets. Default: false.',
           default:     false
         },
+        ...activeViewScopeProps,
         parameterFilters: {
           type:        'array',
           description: 'Optional filters on parameter values (AND logic). ' +
@@ -659,7 +666,8 @@ const TOOLS = [
         category: { type: 'string', description: 'Optional BuiltInCategory suffix, e.g. Walls, Doors, Rooms.' },
         comparison: { type: 'string', description: 'equals, contains, startsWith, endsWith, or notEquals. Default: equals.', default: 'equals' },
         includeParameters: { type: 'boolean', description: 'Include a small parameter sample in results. Default: false.', default: false },
-        maxItems: { type: 'integer', description: 'Safety cap. Default: 200, hard max: 2000.', default: 200 }
+        maxItems: { type: 'integer', description: 'Safety cap. Default: 200, hard max: 2000.', default: 200 },
+        ...activeViewScopeProps
       },
       required: ['parameterName']
     }
@@ -671,7 +679,7 @@ const TOOLS = [
     description: 'Returns all Revit levels in the active document with id, name, and elevation.',
     inputSchema: {
       type:       'object',
-      properties: {},
+      properties: { ...activeViewScopeProps },
       required:   []
     }
   },
@@ -736,7 +744,7 @@ const TOOLS = [
     description: 'Returns all Revit grids in the active document with id, name, and curve data.',
     inputSchema: {
       type:       'object',
-      properties: {},
+      properties: { ...activeViewScopeProps },
       required:   []
     }
   },

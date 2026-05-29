@@ -37,12 +37,15 @@ namespace RevitMcpAddin.Services
             int limit = 50,
             bool includeParameters = false,
             IReadOnlyList<(string Name, string Value)>? parameterFilters = null,
+            bool useActiveView = false,
+            string? viewId = null,
             CancellationToken ct = default)
         {
             return _queue.EnqueueAsync(async uiApp =>
             {
                 var doc = uiApp.ActiveUIDocument?.Document
                     ?? throw new InvalidOperationException("No active document.");
+                var activeView = uiApp.ActiveUIDocument?.ActiveView;
 
                 if (!TryResolveCategory(categoryName, out var bic))
                     throw new ArgumentException($"Unknown or unsupported category: '{categoryName}'. " +
@@ -54,7 +57,7 @@ namespace RevitMcpAddin.Services
                 var collectLimit = hasFilters ? HardMaxElements : (
                     (limit <= 0 || limit == int.MaxValue) ? HardMaxElements : Math.Min(limit, HardMaxElements));
 
-                var elements = new FilteredElementCollector(doc)
+                var elements = CreateScopedElementCollector(doc, activeView, useActiveView, viewId)
                     .OfCategory(bic)
                     .WhereElementIsNotElementType()
                     .Take(collectLimit)
@@ -78,12 +81,40 @@ namespace RevitMcpAddin.Services
 
                 Trace.WriteLine(
                     $"[RevitMCP][ELEMENTS] category={categoryName}, found={elements.Count}, " +
-                    $"limit={collectLimit}, filters={parameterFilters?.Count ?? 0}, includeParams={includeParameters}");
+                    $"limit={collectLimit}, filters={parameterFilters?.Count ?? 0}, includeParams={includeParameters}, " +
+                    $"useActiveView={useActiveView}, viewId={viewId}");
 
                 var result = elements.Select(e => BuildElementInfo(e, includeParameters)).ToList();
                 return await Task.FromResult(result);
 
             }, ct, timeoutMs: ElementsTimeoutMs);
+        }
+
+        private static FilteredElementCollector CreateScopedElementCollector(
+            Document doc,
+            Autodesk.Revit.DB.View? activeView,
+            bool useActiveView,
+            string? viewId)
+        {
+            var scopeView = ResolveCollectorScopeView(doc, activeView, useActiveView, viewId);
+            return scopeView == null
+                ? new FilteredElementCollector(doc)
+                : new FilteredElementCollector(doc, scopeView.Id);
+        }
+
+        private static Autodesk.Revit.DB.View? ResolveCollectorScopeView(
+            Document doc,
+            Autodesk.Revit.DB.View? activeView,
+            bool useActiveView,
+            string? viewId)
+        {
+            if (!string.IsNullOrWhiteSpace(viewId))
+                return ResolveView(doc, viewId);
+
+            if (!useActiveView)
+                return null;
+
+            return activeView ?? throw new InvalidOperationException("No active view.");
         }
 
         // ── Private Helpers ──────────────────────────────────────────────

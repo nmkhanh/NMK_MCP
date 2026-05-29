@@ -1,5 +1,6 @@
 using Autodesk.Revit.DB;
 using RevitMcpAddin.Models;
+using View = Autodesk.Revit.DB.View;
 
 namespace RevitMcpAddin.Services
 {

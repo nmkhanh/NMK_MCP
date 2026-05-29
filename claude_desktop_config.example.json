@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "revit": {
+      "command": "C:/Program Files/nodejs/node.exe",
+      "args": [
+        "D:/KHANHNGUYEN/MCP/NMK_MCP/RevitMcpStdio/mcpServer.js"
+      ],
+      "env": {
+        "REVIT_BASE_URL": "http://localhost:5000"
+      }
+    },
+    "pdf-tools": {
+      "command": "C:/Program Files/nodejs/node.exe",
+      "args": [
+        "D:/KHANHNGUYEN/MCP/NMK_MCP/PDF-Tools/server/index.js"
+      ]
+    }
+  }
+}

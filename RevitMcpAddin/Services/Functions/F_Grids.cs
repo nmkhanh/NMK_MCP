@@ -6,14 +6,21 @@ namespace RevitMcpAddin.Services
 {
     public sealed partial class RevitService
     {
-        public Task<object> GetGridsAsync(CancellationToken ct = default)
+        public Task<object> GetGridsAsync(
+            bool useActiveView = false,
+            string? viewId = null,
+            CancellationToken ct = default)
         {
             return _queue.EnqueueAsync(uiApp =>
             {
                 var doc = uiApp.ActiveUIDocument?.Document
                     ?? throw new InvalidOperationException("No active document.");
 
-                var grids = new FilteredElementCollector(doc)
+                var grids = CreateScopedElementCollector(
+                        doc,
+                        uiApp.ActiveUIDocument?.ActiveView,
+                        useActiveView,
+                        viewId)
                     .OfClass(typeof(Grid))
                     .Cast<Grid>()
                     .OrderBy(g => g.Name)
@@ -24,6 +31,8 @@ namespace RevitMcpAddin.Services
                 {
                     success = true,
                     count = grids.Count,
+                    useActiveView,
+                    viewId,
                     grids,
                     message = $"Found {grids.Count} grid(s)."
                 });

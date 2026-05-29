@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Revit 2026 Add-In Manifest
-  Copy this file to:  %APPDATA%\Autodesk\Revit\Addins\2026\RevitMcpAddin.addin
+  Revit 2024/2026 Add-In Manifest
+  Copy this file to the matching addins folder:
+  %APPDATA%\Autodesk\Revit\Addins\2024\RevitMcpAddin.addin
+  %APPDATA%\Autodesk\Revit\Addins\2026\RevitMcpAddin.addin
   Or place it in the same folder as the compiled DLL.
 -->
 <RevitAddIns>

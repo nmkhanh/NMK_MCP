@@ -373,6 +373,17 @@ namespace RevitMcpAddin.Mcp.Handlers
         private static object Boolean(string description)
             => new { type = "boolean", description };
 
+        private static object UseActiveView
+            => new
+            {
+                type = "boolean",
+                description = "When true, scope the query to elements visible in the active view. Default: false.",
+                @default = false
+            };
+
+        private static object QueryViewId
+            => String("Optional view ElementId to scope the query. Overrides useActiveView when supplied.");
+
         private static object StringArray(string description)
             => new { type = "array", description, items = new { type = "string" } };
 
@@ -403,11 +414,15 @@ namespace RevitMcpAddin.Mcp.Handlers
             ("hostId", String("Optional host ElementId.")),
             ("kind", String("Optional reinforcement kind hint.")),
             ("includeParameters", Boolean("Include instance parameters.")),
-            ("maxItems", Integer("Maximum items to return."))));
+            ("maxItems", Integer("Maximum items to return.")),
+            ("useActiveView", UseActiveView),
+            ("viewId", QueryViewId)));
 
         public static object HostCandidates => Object(Props(
             ("category", String("Optional BuiltInCategory suffix, e.g. StructuralColumns.")),
-            ("maxItems", Integer("Maximum items to return."))));
+            ("maxItems", Integer("Maximum items to return.")),
+            ("useActiveView", UseActiveView),
+            ("viewId", QueryViewId)));
 
         public static object TypeList => Object(Props(
             ("nameContains", String("Optional case-insensitive name filter.")),
@@ -464,9 +479,14 @@ namespace RevitMcpAddin.Mcp.Handlers
             ("startHookTypeId", String("Optional start hook type ElementId.")),
             ("endHookTypeId", String("Optional end hook type ElementId."))), "rebarId");
 
+#if R26
         public static object RebarConstraints => Object(Props(
             ("rebarId", String("Rebar ElementId.")),
             ("useRebarConstraintsToProduceVaryingBars", Boolean("Toggle varying bars driven by constraints."))), "rebarId");
+#else
+        public static object RebarConstraints => Object(Props(
+            ("rebarId", String("Rebar ElementId."))), "rebarId");
+#endif
 
         public static object RebarCover => Object(Props(
             ("hostId", String("Valid rebar host ElementId.")),
@@ -569,7 +589,9 @@ namespace RevitMcpAddin.Mcp.Handlers
         public static object RebarQuantities => Object(Props(
             ("hostId", String("Optional host ElementId.")),
             ("includeCouplers", Boolean("Include coupler quantities.")),
-            ("maxItems", Integer("Maximum items to inspect."))));
+            ("maxItems", Integer("Maximum items to inspect.")),
+            ("useActiveView", UseActiveView),
+            ("viewId", QueryViewId)));
 
         public static object SetPartition => Object(Props(
             ("elementIds", StringArray("Rebar or coupler ElementIds.")),

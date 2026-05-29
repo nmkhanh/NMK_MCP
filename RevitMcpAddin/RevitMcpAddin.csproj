@@ -1,65 +1,102 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- Revit 2026 uses .NET 8 -->
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <!--<OutputType>Exe</OutputType>-->
+    <OutputType>Library</OutputType>
+    <XamlDebuggingInformation>true</XamlDebuggingInformation>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Platform>x64</Platform>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>true</ImplicitUsings>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
     <AssemblyName>RevitMcpAddin</AssemblyName>
     <RootNamespace>RevitMcpAddin</RootNamespace>
-    <LangVersion>12</LangVersion>
-    <!-- Keep output flat (no net8.0-windows subfolder) -->
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <Configurations>Debug;Release</Configurations>
-	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <SkipRevitDeploy>false</SkipRevitDeploy>
+    <Configurations>Debug;Release;D2024;R2024;D2026;R2026</Configurations>
+    <!--<Configurations>D2025;R2025;D2023;R2023;D2022;R2022;D2021;R2021;D2020;R2020</Configurations>-->
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
-  <!-- ─────────────────────────── NuGet Packages ─────────────────────────── -->
+  <Choose>
+    <When Condition="$(Configuration.Contains('24'))">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);R24</DefineConstants>
+        <RevitVersion>2024</RevitVersion>
+        <TargetFramework>net48</TargetFramework>
+      </PropertyGroup>
+    </When>
+    <When Condition="$(Configuration.Contains('26')) Or '$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);R26</DefineConstants>
+        <RevitVersion>2026</RevitVersion>
+        <TargetFramework>net8.0-windows</TargetFramework>
+      </PropertyGroup>
+    </When>
+
+    <!-- Temporarily disabled: only Revit 2024 and 2026 are active for this add-in. -->
+    <!--<When Condition="$(Configuration.Contains('25'))">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);R25</DefineConstants>
+        <RevitVersion>2025</RevitVersion>
+        <TargetFramework>net8.0-windows</TargetFramework>
+      </PropertyGroup>
+    </When>
+    <When Condition="$(Configuration.Contains('23'))">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);R23</DefineConstants>
+        <RevitVersion>2023</RevitVersion>
+        <TargetFramework>net48</TargetFramework>
+      </PropertyGroup>
+    </When>
+    <When Condition="$(Configuration.Contains('22'))">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);R22</DefineConstants>
+        <RevitVersion>2022</RevitVersion>
+        <TargetFramework>net48</TargetFramework>
+      </PropertyGroup>
+    </When>
+    <When Condition="$(Configuration.Contains('21'))">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);R21</DefineConstants>
+        <RevitVersion>2021</RevitVersion>
+        <TargetFramework>net48</TargetFramework>
+      </PropertyGroup>
+    </When>
+    <When Condition="$(Configuration.Contains('20'))">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);R20</DefineConstants>
+        <RevitVersion>2020</RevitVersion>
+        <TargetFramework>net47</TargetFramework>
+      </PropertyGroup>
+    </When>-->
+  </Choose>
+
   <ItemGroup>
-    <!-- Revit async dispatcher (thread-safe Revit API access) -->
-    <PackageReference Include="Nice3point.Revit.Api.AdWindows" Version="2026.0.4" />
-    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="2026.0.4" />
-    <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="2026.0.4" />
-    <PackageReference Include="Revit.Async" Version="2.1.1">
-      <GeneratePathProperty>True</GeneratePathProperty>
-    </PackageReference>
-    <!-- JSON serialisation -->
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
-      <GeneratePathProperty>True</GeneratePathProperty>
-    </PackageReference>
-    <!-- MVVM source generators -->
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2">
-      <GeneratePathProperty>True</GeneratePathProperty>
-    </PackageReference>
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="$(RevitVersion).*" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(RevitVersion).*" />
+    <PackageReference Include="Nice3point.Revit.Api.AdWindows" Version="$(RevitVersion).*" />
+    <PackageReference Include="Revit.Async" Version="2.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="System.Threading.Channels" Version="8.0.0" />
   </ItemGroup>
 
-  <!-- ──────────────────── Revit 2026 API references ──────────────────────  -->
-  <!-- Set Private=false so Revit DLLs are NOT copied to output folder        -->
-  <ItemGroup>
-    <Reference Include="RevitAPI">
-      <HintPath>C:\Program Files\Autodesk\Revit 2026\RevitAPI.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="RevitAPIUI">
-      <HintPath>C:\Program Files\Autodesk\Revit 2026\RevitAPIUI.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-  </ItemGroup>
-	<Target Name="CopyBuildOutput" AfterTargets="Build">
-		<ItemGroup>
-			<!-- Lấy toàn bộ output -->
-			<AllOutputFiles Include="$(TargetDir)**\*.*" />
+  <Target Name="CopyBuildOutput" AfterTargets="Build" Condition="'$(SkipRevitDeploy)' != 'true'">
+    <ItemGroup>
+      <AllOutputFiles Include="$(TargetDir)**\*.*" />
+    </ItemGroup>
+    <MakeDir Directories="C:\ProgramData\Autodesk\Revit\Addins\$(RevitVersion)\RevitMcpAddin\" />
+    <Copy SourceFiles="@(AllOutputFiles)" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\$(RevitVersion)\RevitMcpAddin\" SkipUnchangedFiles="false" />
+  </Target>
 
-		</ItemGroup>
-		<Copy SourceFiles="@(AllOutputFiles)" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\2026\RevitMcpAddin\" SkipUnchangedFiles="false" />
-	</Target>
-	<Target Name="CopyRebuildOutput" AfterTargets="Rebuild">
-		<ItemGroup>
-			<!-- Lấy toàn bộ output -->
-			<AllOutputFiles Include="$(TargetDir)**\*.*" />
-		</ItemGroup>
-		<Copy SourceFiles="@(AllOutputFiles)" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\2026\RevitMcpAddin\" SkipUnchangedFiles="false" />
-	</Target>
+  <Target Name="CopyRebuildOutput" AfterTargets="Rebuild" Condition="'$(SkipRevitDeploy)' != 'true'">
+    <ItemGroup>
+      <AllOutputFiles Include="$(TargetDir)**\*.*" />
+    </ItemGroup>
+    <MakeDir Directories="C:\ProgramData\Autodesk\Revit\Addins\$(RevitVersion)\RevitMcpAddin\" />
+    <Copy SourceFiles="@(AllOutputFiles)" DestinationFolder="C:\ProgramData\Autodesk\Revit\Addins\$(RevitVersion)\RevitMcpAddin\" SkipUnchangedFiles="false" />
+  </Target>
 </Project>

@@ -16,6 +16,12 @@ namespace RevitMcpAddin.Models
 
         [JsonProperty("maxItems")]
         public int MaxItems { get; set; } = 500;
+
+        [JsonProperty("useActiveView")]
+        public bool UseActiveView { get; set; }
+
+        [JsonProperty("viewId")]
+        public string? ViewId { get; set; }
     }
 
     public sealed class RebarHostCandidatesRequest
@@ -25,6 +31,12 @@ namespace RevitMcpAddin.Models
 
         [JsonProperty("maxItems")]
         public int MaxItems { get; set; } = 200;
+
+        [JsonProperty("useActiveView")]
+        public bool UseActiveView { get; set; }
+
+        [JsonProperty("viewId")]
+        public string? ViewId { get; set; }
     }
 
     public sealed class RebarElementRequest
@@ -472,6 +484,12 @@ namespace RevitMcpAddin.Models
 
         [JsonProperty("maxItems")]
         public int MaxItems { get; set; } = 1000;
+
+        [JsonProperty("useActiveView")]
+        public bool UseActiveView { get; set; }
+
+        [JsonProperty("viewId")]
+        public string? ViewId { get; set; }
     }
 
     public sealed class SetRebarPartitionRequest
