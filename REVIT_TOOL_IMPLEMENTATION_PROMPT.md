@@ -2,14 +2,14 @@
 
 ## Current implementation status
 
-Last updated by Codex on 2026-05-28:
+Last updated by Codex on 2026-05-30:
 
-- Total registered/fallback tools: 171, including the 7 original tools.
-- New roadmap tools implemented: 164.
+- Total registered/fallback tools: 184, including the 7 original tools.
+- New roadmap tools implemented: 177.
 - Target Revit version: Revit 2026 (.NET 8, Nice3point Revit API 2026.0.4, add-in output copy path `C:\ProgramData\Autodesk\Revit\Addins\2026\RevitMcpAddin\`).
-- Build status: `dotnet build RevitMcpAddin\RevitMcpAddin.csproj` succeeds with warnings only.
+- Build status: `dotnet build RevitMcpAddin\RevitMcpAddin.csproj -p:SkipRevitDeploy=true` succeeds. Full deploy build compiles but cannot copy while Revit 2026 locks the add-in DLLs.
 - STDIO fallback status: `node -c RevitMcpStdio\tools.js` succeeds.
-- Completed groups: discovery/type lookup, level/grid, parameters, views/sheets/ViewSheetSet, generic CRUD/transform/batch, material/type/view-template/text/detail/model line, family placement wrappers, building objects, annotation/tag/dimension/filled region, MEP, schedules/export schedule, load/reload family, groups/assemblies, reload links/worksets/design-option assignment, rebar/reinforcement/fabric/coupler/quantity workflows.
+- Completed groups: discovery/type lookup, level/grid, parameters, views/sheets/ViewSheetSet, generic CRUD/transform/batch, material/type/view-template/text/detail/model line, family placement wrappers, building objects, annotation/tag/dimension/filled region, MEP, schedules/export schedule, load/reload family, groups/assemblies, reload links/worksets/design-option assignment, rebar/reinforcement/fabric/coupler/quantity workflows, override-in-view graphics/filter/category workflows.
 - Remaining implementation work in this prompt: none for the listed roadmap tools. Remaining validation work: runtime smoke tests inside Revit with real project files and family/link/workshared samples.
 
 Mục tiêu: mở rộng `NMK_MCP` thành bộ MCP tool tổng quát cho Revit, ưu tiên tạo/sửa/truy vấn đối tượng và parameter theo cách có thể bảo trì. Tất cả tool mới phải bám đúng cấu trúc hiện tại của dự án: mỗi tool có handler riêng, service function riêng, model riêng khi cần, và đăng ký rõ ràng trong `App.cs`.
@@ -633,6 +633,19 @@ Status: da trien khai trong Revit 2026 add-in va STDIO fallback; can smoke test 
 162. `create_beam_stirrups`
 163. `create_wall_rebar_grid`
 164. `create_slab_rebar_grid`
+165. `get_view_overrides`
+166. `set_element_overrides_in_view`
+167. `clear_element_overrides_in_view`
+168. `set_category_overrides_in_view`
+169. `clear_category_overrides_in_view`
+170. `set_category_visibility_in_view`
+171. `set_filter_overrides_in_view`
+172. `clear_filter_overrides_in_view`
+173. `add_filter_to_view`
+174. `remove_filter_from_view`
+175. `set_view_detail_graphics`
+176. `create_view_graphics_override_preset`
+177. `apply_view_graphics_override_preset`
 
 ## 6. Thứ tự triển khai đề xuất thực tế
 
@@ -650,6 +663,7 @@ Thứ tự ưu tiên để có giá trị sớm và giảm rủi ro:
 10. Phase 6 MEP chia nhỏ.
 11. Phase 7 advanced.
 12. Phase 8 Rebar/Reinforcement/Coupler chia nho theo 8A-8F.
+13. Phase 9 Override in View graphics/filter/category toolset.
 
 Mỗi lần triển khai chỉ nên làm tối đa 8-12 tool, hoặc ít hơn nếu tool đụng nhiều Revit API phức tạp. Sau mỗi phase phải build/test trước khi sang phase tiếp theo.
 

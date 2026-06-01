@@ -181,6 +181,7 @@ namespace RevitMcpAddin
                     .Register(new ConnectMepElementsHandler(RevitSvc))
                     .Register(new DisconnectMepElementsHandler(RevitSvc))
                     .RegisterRebarHandlers(RevitSvc)
+                    .RegisterViewOverrideHandlers(RevitSvc)
                     .Register(new PrintSheetHandler(RevitSvc))
                     .Register(new ExportCadHandler(RevitSvc))
                     .Register(new ListCadExportTemplatesHandler(RevitSvc));

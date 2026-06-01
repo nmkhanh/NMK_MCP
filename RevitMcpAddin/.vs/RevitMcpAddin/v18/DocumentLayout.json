@@ -1,29 +1,29 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Test\\RevitMcpAddin\\",
+  "WorkspaceRootPath": "D:\\MCP\\MCPRevit\\RevitMcpAddin\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\test\\revitmcpaddin\\services\\functions\\paperformmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\mcp\\mcprevit\\revitmcpaddin\\services\\functions\\paperformmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|solutionrelative:services\\functions\\paperformmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\test\\revitmcpaddin\\revitmcpaddin.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\mcp\\mcprevit\\revitmcpaddin\\revitmcpaddin.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|solutionrelative:revitmcpaddin.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\test\\revitmcpaddin\\services\\functions\\f_print.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\mcp\\mcprevit\\revitmcpaddin\\services\\functions\\f_print.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|solutionrelative:services\\functions\\f_print.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\test\\revitmcpaddin\\services\\revitservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\mcp\\mcprevit\\revitmcpaddin\\services\\revitservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|solutionrelative:services\\revitservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\test\\revitmcpaddin\\mcp\\mcpserver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\mcp\\mcprevit\\revitmcpaddin\\mcp\\mcpserver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|solutionrelative:mcp\\mcpserver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\test\\revitmcpaddin\\ribbon\\ribboncreator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|d:\\mcp\\mcprevit\\revitmcpaddin\\ribbon\\ribboncreator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{32D03FF2-3221-2905-E349-9EAC748A6625}|RevitMcpAddin.csproj|solutionrelative:ribbon\\ribboncreator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -34,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -46,15 +46,23 @@
             },
             {
               "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "PaperFormManager.cs",
-              "DocumentMoniker": "D:\\Test\\RevitMcpAddin\\Services\\Functions\\PaperFormManager.cs",
+              "DocumentMoniker": "D:\\MCP\\MCPRevit\\RevitMcpAddin\\Services\\Functions\\PaperFormManager.cs",
               "RelativeDocumentMoniker": "Services\\Functions\\PaperFormManager.cs",
-              "ToolTip": "D:\\Test\\RevitMcpAddin\\Services\\Functions\\PaperFormManager.cs",
+              "ToolTip": "D:\\MCP\\MCPRevit\\RevitMcpAddin\\Services\\Functions\\PaperFormManager.cs",
               "RelativeToolTip": "Services\\Functions\\PaperFormManager.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -65,43 +73,33 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "F_Print.cs",
-              "DocumentMoniker": "D:\\Test\\RevitMcpAddin\\Services\\Functions\\F_Print.cs",
+              "DocumentMoniker": "D:\\MCP\\MCPRevit\\RevitMcpAddin\\Services\\Functions\\F_Print.cs",
               "RelativeDocumentMoniker": "Services\\Functions\\F_Print.cs",
-              "ToolTip": "D:\\Test\\RevitMcpAddin\\Services\\Functions\\F_Print.cs",
+              "ToolTip": "D:\\MCP\\MCPRevit\\RevitMcpAddin\\Services\\Functions\\F_Print.cs",
               "RelativeToolTip": "Services\\Functions\\F_Print.cs",
               "ViewState": "AgIAALMAAAAAAAAAAAAgwMIAAABGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-06T18:23:18.783Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
+              "WhenOpened": "2026-05-06T18:23:18.783Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
               "Title": "RevitService.cs",
-              "DocumentMoniker": "D:\\Test\\RevitMcpAddin\\Services\\RevitService.cs",
+              "DocumentMoniker": "D:\\MCP\\MCPRevit\\RevitMcpAddin\\Services\\RevitService.cs",
               "RelativeDocumentMoniker": "Services\\RevitService.cs",
-              "ToolTip": "D:\\Test\\RevitMcpAddin\\Services\\RevitService.cs",
+              "ToolTip": "D:\\MCP\\MCPRevit\\RevitMcpAddin\\Services\\RevitService.cs",
               "RelativeToolTip": "Services\\RevitService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-03T10:22:32.6Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-03T10:22:32.6Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
               "Title": "RibbonCreator.cs",
-              "DocumentMoniker": "D:\\Test\\RevitMcpAddin\\Ribbon\\RibbonCreator.cs",
+              "DocumentMoniker": "D:\\MCP\\MCPRevit\\RevitMcpAddin\\Ribbon\\RibbonCreator.cs",
               "RelativeDocumentMoniker": "Ribbon\\RibbonCreator.cs",
-              "ToolTip": "D:\\Test\\RevitMcpAddin\\Ribbon\\RibbonCreator.cs",
+              "ToolTip": "D:\\MCP\\MCPRevit\\RevitMcpAddin\\Ribbon\\RibbonCreator.cs",
               "RelativeToolTip": "Ribbon\\RibbonCreator.cs",
               "ViewState": "AgIAAAoAAAAAAAAAAAArwCcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -111,9 +109,9 @@
               "$type": "Document",
               "DocumentIndex": 4,
               "Title": "McpServer.cs",
-              "DocumentMoniker": "D:\\Test\\RevitMcpAddin\\Mcp\\McpServer.cs",
+              "DocumentMoniker": "D:\\MCP\\MCPRevit\\RevitMcpAddin\\Mcp\\McpServer.cs",
               "RelativeDocumentMoniker": "Mcp\\McpServer.cs",
-              "ToolTip": "D:\\Test\\RevitMcpAddin\\Mcp\\McpServer.cs",
+              "ToolTip": "D:\\MCP\\MCPRevit\\RevitMcpAddin\\Mcp\\McpServer.cs",
               "RelativeToolTip": "Mcp\\McpServer.cs",
               "ViewState": "AgIAAB8AAAAAAAAAAAAjwNwBAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -123,14 +121,13 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "RevitMcpAddin.csproj",
-              "DocumentMoniker": "D:\\Test\\RevitMcpAddin\\RevitMcpAddin.csproj",
+              "DocumentMoniker": "D:\\MCP\\MCPRevit\\RevitMcpAddin\\RevitMcpAddin.csproj",
               "RelativeDocumentMoniker": "RevitMcpAddin.csproj",
-              "ToolTip": "D:\\Test\\RevitMcpAddin\\RevitMcpAddin.csproj",
+              "ToolTip": "D:\\MCP\\MCPRevit\\RevitMcpAddin\\RevitMcpAddin.csproj",
               "RelativeToolTip": "RevitMcpAddin.csproj",
               "ViewState": "AgIAABgAAAAAAAAAAAAAAC0AAABOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-05-01T15:23:41.68Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-01T15:23:41.68Z"
             }
           ]
         }

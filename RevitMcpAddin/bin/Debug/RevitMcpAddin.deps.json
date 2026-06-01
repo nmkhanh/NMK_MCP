@@ -10,11 +10,7 @@
         "dependencies": {
           "CommunityToolkit.Mvvm": "8.3.2",
           "Newtonsoft.Json": "13.0.3",
-          "Nice3point.Revit.Api.AdWindows": "2026.4.10",
-          "Nice3point.Revit.Api.RevitAPI": "2026.4.10",
-          "Nice3point.Revit.Api.RevitAPIUI": "2026.4.10",
-          "Revit.Async": "2.1.1",
-          "System.Threading.Channels": "8.0.0"
+          "Revit.Async": "2.1.1"
         },
         "runtime": {
           "RevitMcpAddin.dll": {}
@@ -36,9 +32,6 @@
           }
         }
       },
-      "Nice3point.Revit.Api.AdWindows/2026.4.10": {},
-      "Nice3point.Revit.Api.RevitAPI/2026.4.10": {},
-      "Nice3point.Revit.Api.RevitAPIUI/2026.4.10": {},
       "Revit.Async/2.1.1": {
         "runtime": {
           "lib/netstandard2.1/Revit.Async.dll": {
@@ -46,8 +39,7 @@
             "fileVersion": "2.1.1.0"
           }
         }
-      },
-      "System.Threading.Channels/8.0.0": {}
+      }
     }
   },
   "libraries": {
@@ -70,40 +62,12 @@
       "path": "newtonsoft.json/13.0.3",
       "hashPath": "newtonsoft.json.13.0.3.nupkg.sha512"
     },
-    "Nice3point.Revit.Api.AdWindows/2026.4.10": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-i+LB/c2VVmfxCw+jk0tFHep77K2vYQfvYaMrjCzIvNvzNPAnxS542emCCv1orlXcJC/hK7bvwacfa1qGF97bsw==",
-      "path": "nice3point.revit.api.adwindows/2026.4.10",
-      "hashPath": "nice3point.revit.api.adwindows.2026.4.10.nupkg.sha512"
-    },
-    "Nice3point.Revit.Api.RevitAPI/2026.4.10": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-Kb4CHF9AKZ+49tHwdHyuKLrL1O/T6zOFUFZSOhB4lhiTao9akNmS6qTMVeD0oZo5m93dQX7CxnwloPxm1NFmRw==",
-      "path": "nice3point.revit.api.revitapi/2026.4.10",
-      "hashPath": "nice3point.revit.api.revitapi.2026.4.10.nupkg.sha512"
-    },
-    "Nice3point.Revit.Api.RevitAPIUI/2026.4.10": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-/U9vJA2KZcouTSXKBstuBfz6m5TmE1WLuZyITkMoRwv51YTq5GlZszvW/v5GnCFWdwOCRtHxMsBR4cWnH/btKw==",
-      "path": "nice3point.revit.api.revitapiui/2026.4.10",
-      "hashPath": "nice3point.revit.api.revitapiui.2026.4.10.nupkg.sha512"
-    },
     "Revit.Async/2.1.1": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-aK6R/fxrn3jpiKc8LYqfWZ+OfEKNnwgkiln1uyuvaPnTWBOvfiisnOfe7+Sgogr4iEuMmuMDsmBRMCycMlUpnw==",
       "path": "revit.async/2.1.1",
       "hashPath": "revit.async.2.1.1.nupkg.sha512"
-    },
-    "System.Threading.Channels/8.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-CMaFr7v+57RW7uZfZkPExsPB6ljwzhjACWW1gfU35Y56rk72B/Wu+sTqxVmGSk4SFUlPc3cjeKND0zktziyjBA==",
-      "path": "system.threading.channels/8.0.0",
-      "hashPath": "system.threading.channels.8.0.0.nupkg.sha512"
     }
   }
 }

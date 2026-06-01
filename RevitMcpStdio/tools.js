@@ -276,9 +276,111 @@ const REBAR_TOOLS = [
   rebarTool('create_slab_rebar_grid', 'Creates a slab rebar grid from the host bounding box.', workflowProps, ['hostId'])
 ];
 
+const viewOverrideProps = {
+  projectionLineColor: stringProp('Projection line color as #RRGGBB.'),
+  projectionLinePatternId: stringProp('Projection line pattern ElementId.'),
+  projectionLineWeight: integerProp('Projection line weight.'),
+  cutLineColor: stringProp('Cut line color as #RRGGBB.'),
+  cutLinePatternId: stringProp('Cut line pattern ElementId.'),
+  cutLineWeight: integerProp('Cut line weight.'),
+  surfaceForegroundPatternId: stringProp('Surface foreground fill pattern ElementId.'),
+  surfaceForegroundPatternColor: stringProp('Surface foreground fill color as #RRGGBB.'),
+  surfaceForegroundPatternVisible: booleanProp('Surface foreground pattern visibility.'),
+  surfaceBackgroundPatternId: stringProp('Surface background fill pattern ElementId.'),
+  surfaceBackgroundPatternColor: stringProp('Surface background fill color as #RRGGBB.'),
+  surfaceBackgroundPatternVisible: booleanProp('Surface background pattern visibility.'),
+  cutForegroundPatternId: stringProp('Cut foreground fill pattern ElementId.'),
+  cutForegroundPatternColor: stringProp('Cut foreground fill color as #RRGGBB.'),
+  cutForegroundPatternVisible: booleanProp('Cut foreground pattern visibility.'),
+  cutBackgroundPatternId: stringProp('Cut background fill pattern ElementId.'),
+  cutBackgroundPatternColor: stringProp('Cut background fill color as #RRGGBB.'),
+  cutBackgroundPatternVisible: booleanProp('Cut background pattern visibility.'),
+  transparency: integerProp('Surface transparency from 0 to 100.'),
+  halftone: booleanProp('Halftone override.'),
+  detailLevel: stringProp('coarse, medium, fine, or undefined.')
+};
+const overridesProp = { type: 'object', description: 'Graphic override settings.', properties: viewOverrideProps };
+const viewTargetProps = { viewId: stringProp('Optional view ElementId. Defaults to active view.') };
+const categoryTargetProps = {
+  ...viewTargetProps,
+  categoryId: stringProp('Category ElementId.'),
+  category: stringProp('BuiltInCategory name or suffix, e.g. Walls or OST_Walls.')
+};
+const filterTargetProps = {
+  ...viewTargetProps,
+  filterId: stringProp('ParameterFilterElement or selection filter ElementId.')
+};
+const VIEW_OVERRIDE_TOOLS = [
+  rebarTool('get_view_overrides', 'Reads element, category, and filter override graphics in a view.', {
+    ...viewTargetProps,
+    elementIds: stringArrayProp('ElementIds whose overrides should be read.'),
+    categoryIds: stringArrayProp('Category ElementIds whose overrides should be read.'),
+    categories: stringArrayProp('BuiltInCategory names or suffixes whose overrides should be read.'),
+    filterIds: stringArrayProp('Filter ElementIds to inspect. Defaults to filters already on the view.'),
+    includeDefaults: booleanProp('Include unset/default override properties.')
+  }),
+  rebarTool('set_element_overrides_in_view', 'Applies graphic overrides to elements in a view.', {
+    ...viewTargetProps,
+    elementIds: stringArrayProp('ElementIds to override.'),
+    overrides: overridesProp,
+    dryRun: booleanProp('Validate targets without changing the model.'),
+    maxItems: integerProp('Maximum element count allowed.')
+  }, ['elementIds', 'overrides']),
+  rebarTool('clear_element_overrides_in_view', 'Clears element graphic overrides in a view.', {
+    ...viewTargetProps,
+    elementIds: stringArrayProp('ElementIds whose element overrides should be cleared.'),
+    dryRun: booleanProp('Validate targets without changing the model.'),
+    maxItems: integerProp('Maximum element count allowed.')
+  }, ['elementIds']),
+  rebarTool('set_category_overrides_in_view', 'Applies graphic overrides to one category in a view.', {
+    ...categoryTargetProps,
+    overrides: overridesProp
+  }, ['overrides']),
+  rebarTool('clear_category_overrides_in_view', 'Clears category graphic overrides in a view.', categoryTargetProps),
+  rebarTool('set_category_visibility_in_view', 'Shows or hides one category in a view.', {
+    ...categoryTargetProps,
+    visible: booleanProp('True to show the category, false to hide it.')
+  }, ['visible']),
+  rebarTool('set_filter_overrides_in_view', 'Applies graphic overrides and visibility settings to a view filter.', {
+    ...filterTargetProps,
+    overrides: overridesProp,
+    visible: booleanProp('Optional filter visibility in the view.'),
+    enabled: booleanProp('Optional filter enabled state when supported by this Revit API.')
+  }, ['filterId', 'overrides']),
+  rebarTool('clear_filter_overrides_in_view', 'Clears graphic overrides for a view filter.', filterTargetProps, ['filterId']),
+  rebarTool('add_filter_to_view', 'Adds a filter to a view and optionally applies visibility or overrides.', {
+    ...filterTargetProps,
+    overrides: overridesProp,
+    visible: booleanProp('Optional filter visibility in the view.'),
+    enabled: booleanProp('Optional filter enabled state when supported by this Revit API.')
+  }, ['filterId']),
+  rebarTool('remove_filter_from_view', 'Removes a filter from a view.', filterTargetProps, ['filterId']),
+  rebarTool('set_view_detail_graphics', 'Updates detail level, display style, parts visibility, and discipline for a view.', {
+    ...viewTargetProps,
+    detailLevel: stringProp('coarse, medium, or fine.'),
+    displayStyle: stringProp('wireframe, hidden_line, shaded, consistent_colors, realistic, or flat_colors.'),
+    partsVisibility: stringProp('show_parts_only, show_original_only, or show_parts_and_original.'),
+    discipline: stringProp('architecture, structural, mechanical, electrical, coordination, or plumbing.')
+  }),
+  rebarTool('create_view_graphics_override_preset', 'Stores a named graphic override preset for this add-in session.', {
+    name: stringProp('Preset name for this add-in session.'),
+    overrides: overridesProp
+  }, ['name', 'overrides']),
+  rebarTool('apply_view_graphics_override_preset', 'Applies a named graphic override preset to elements, categories, or filters in a view.', {
+    ...viewTargetProps,
+    targetType: stringProp('element, category, or filter.'),
+    targetIds: stringArrayProp('ElementIds, category ids, or filter ids to receive the preset.'),
+    presetName: stringProp('Preset name created earlier.'),
+    visible: booleanProp('Optional visibility for category/filter targets.'),
+    enabled: booleanProp('Optional enabled state for filter targets.'),
+    maxItems: integerProp('Maximum target count allowed.')
+  }, ['targetType', 'targetIds', 'presetName'])
+];
+
 /** @type {import('./types').McpTool[]} */
 const TOOLS = [
   ...REBAR_TOOLS,
+  ...VIEW_OVERRIDE_TOOLS,
   // ── select_elements_by_ids ───────────────────────────────
   {
     name:        'select_elements_by_ids',
